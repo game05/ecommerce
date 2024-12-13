@@ -21,7 +21,7 @@ body {
 }
 
 /* Animation continue pour les badges promo */
-@keyframes float-up {
+@keyframes floating-up {
   0%, 100% {
     transform: translateY(0);
   }
@@ -30,7 +30,7 @@ body {
   }
 }
 
-@keyframes float-down {
+@keyframes floating-down {
   0%, 100% {
     transform: translateY(0);
   }
@@ -39,10 +39,10 @@ body {
   }
 }
 
-.animate-float-up {
-  animation: float-up 3s ease-in-out infinite;
+.animate-floating-up {
+  animation: floating-up 3s ease-in-out infinite;
 }
 
-.animate-float-down {
-  animation: float-down 3s ease-in-out infinite;
+.animate-floating-down {
+  animation: floating-down 3s ease-in-out infinite;
 }
