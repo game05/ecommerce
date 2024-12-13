@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { Bath, Heart, Sparkles } from 'lucide-react';
 
 export default function ServiettesPage() {
   const serviettes = [
@@ -40,14 +41,41 @@ export default function ServiettesPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
       {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Nos Serviettes</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Découvrez notre collection de serviettes douces et absorbantes, 
-          spécialement conçues pour le confort de votre bébé.
-        </p>
+      <div className="mb-12">
+        {/* En-tête avec icônes */}
+        <div className="flex items-center justify-center space-x-3 mb-4">
+          <Bath className="h-8 w-8 text-pink-500" />
+          <Sparkles className="h-6 w-6 text-pink-400" />
+          <Heart className="h-7 w-7 text-pink-500" />
+        </div>
+
+        {/* Titre et description */}
+        <div className="text-center max-w-3xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Des Serviettes{' '}
+            <span className="text-pink-500">Douces et Confortables</span>
+            <br />pour Votre Bébé
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-6">
+            Découvrez notre collection de serviettes délicates, spécialement conçues 
+            pour envelopper votre petit trésor dans un cocon de douceur après le bain.
+          </p>
+        </div>
+
+        {/* Badges caractéristiques */}
+        <div className="flex flex-wrap justify-center gap-3">
+          <span className="bg-pink-50 px-4 py-2 rounded-full text-sm font-medium text-pink-600">
+            100% Coton Bio
+          </span>
+          <span className="bg-pink-50 px-4 py-2 rounded-full text-sm font-medium text-pink-600">
+            Ultra Absorbantes
+          </span>
+          <span className="bg-pink-50 px-4 py-2 rounded-full text-sm font-medium text-pink-600">
+            Douces pour la Peau
+          </span>
+        </div>
       </div>
 
       {/* Products Grid */}
