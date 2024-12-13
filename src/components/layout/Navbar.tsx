@@ -24,24 +24,12 @@ export const Navbar = () => {
 
             {/* Navigation Links - Desktop */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-primary transition">
-                Accueil
-              </Link>
-              <Link href="/products" className="text-gray-700 hover:text-primary transition">
-                Produits
-              </Link>
               <Link 
                 href="/serviettes" 
                 className="text-gray-700 hover:text-primary transition flex items-center space-x-1"
               >
                 <Bath className="h-4 w-4" />
                 <span>Serviettes</span>
-              </Link>
-              <Link href="/about" className="text-gray-700 hover:text-primary transition">
-                À propos
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-primary transition">
-                Contact
               </Link>
             </div>
 

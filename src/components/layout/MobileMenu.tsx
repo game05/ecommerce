@@ -48,48 +48,12 @@ export const MobileMenu = () => {
               <ul className="space-y-4">
                 <li>
                   <Link
-                    href="/"
-                    className="block text-lg text-gray-700 hover:text-primary transition"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Accueil
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/products"
-                    className="block text-lg text-gray-700 hover:text-primary transition"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Produits
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     href="/serviettes"
                     className="flex items-center text-lg text-gray-700 hover:text-primary transition space-x-2"
                     onClick={() => setIsOpen(false)}
                   >
                     <Bath className="h-5 w-5" />
                     <span>Serviettes</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/about"
-                    className="block text-lg text-gray-700 hover:text-primary transition"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    À propos
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/contact"
-                    className="block text-lg text-gray-700 hover:text-primary transition"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Contact
                   </Link>
                 </li>
               </ul>
