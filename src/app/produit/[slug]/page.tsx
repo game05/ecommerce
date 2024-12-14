@@ -6,10 +6,10 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
-// Fonction pour récupérer un produit depuis Supabase
-async function getProduct(id: string) {
+// Fonction pour récupérer un produit depuis Supabase par son slug
+async function getProductBySlug(slug: string) {
   try {
-    console.log(`Tentative de récupération du produit ${id} depuis Supabase...`);
+    console.log(`Tentative de récupération du produit avec le slug ${slug} depuis Supabase...`);
 
     // Vérification de la connexion Supabase
     const { data: connectionTest, error: connectionError } = await supabase.from('products').select('count');
@@ -19,20 +19,23 @@ async function getProduct(id: string) {
     }
     console.log('Connexion à Supabase établie');
 
-    // Récupération du produit
+    // Convertit le slug en nom de produit (remplace les tirets par des espaces)
+    const productName = decodeURIComponent(slug.replace(/-/g, ' '));
+
+    // Récupération du produit par son nom
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .eq('id', id)
+      .ilike('name', productName)
       .single();
 
     if (error) {
-      console.error(`Erreur lors de la récupération du produit ${id}:`, error.message);
+      console.error(`Erreur lors de la récupération du produit ${productName}:`, error.message);
       throw error;
     }
 
     if (!data) {
-      console.log(`Produit ${id} non trouvé`);
+      console.log(`Produit ${productName} non trouvé`);
       return null;
     }
 
@@ -44,12 +47,12 @@ async function getProduct(id: string) {
   }
 }
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const product = await getProduct(params.id);
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const product = await getProductBySlug(params.slug);
 
   // Vérification plus détaillée des données
   if (!product) {
-    console.log(`Produit ${params.id} non trouvé, redirection vers 404`);
+    console.log(`Produit ${params.slug} non trouvé, redirection vers 404`);
     notFound();
   }
 

@@ -104,39 +104,44 @@ export default async function ServiettesPage() {
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {serviettes.map((serviette) => (
-          <Link 
-            key={serviette.id}
-            href={`/produit/${serviette.id}`}
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition group"
-          >
-            <div className="relative aspect-square overflow-hidden">
-              <Image
-                src={serviette.image_url}
-                alt={serviette.name}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              />
-            </div>
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {serviette.name}
-              </h3>
-              <p className="text-gray-600 mb-4">
-                {serviette.description}
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="text-pink-500 font-semibold">
-                  {serviette.price.toFixed(2)}€
-                </span>
-                <button className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition">
-                  Voir le produit
-                </button>
+        {serviettes.map((serviette) => {
+          // Création du slug à partir du nom du produit
+          const slug = encodeURIComponent(serviette.name.toLowerCase().replace(/ /g, '-'));
+
+          return (
+            <Link 
+              key={serviette.id}
+              href={`/produit/${slug}`}
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition group"
+            >
+              <div className="relative aspect-square overflow-hidden">
+                <Image
+                  src={serviette.image_url}
+                  alt={serviette.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
               </div>
-            </div>
-          </Link>
-        ))}
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {serviette.name}
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  {serviette.description}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-pink-500 font-semibold">
+                    {serviette.price.toFixed(2)}€
+                  </span>
+                  <button className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition">
+                    Voir le produit
+                  </button>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       {/* Features Section */}
