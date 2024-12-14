@@ -1,44 +1,26 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { Bath, Heart, Sparkles } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
-export default function ServiettesPage() {
-  const serviettes = [
-    {
-      id: 1,
-      name: 'Serviette de bain bébé - Rose',
-      description: 'Serviette douce et absorbante avec capuche, parfaite pour bébé',
-      price: 24.99,
-      image: 'https://images.unsplash.com/photo-1617331140180-e8262094733a?w=800&q=80'
-    },
-    {
-      id: 3,
-      name: 'Set de serviettes bébé',
-      description: 'Lot de 3 serviettes douces pour le bain de bébé',
-      price: 34.99,
-      image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80'
-    },
-    {
-      id: 4,
-      name: 'Serviette de plage bébé',
-      description: 'Grande serviette absorbante, idéale pour la plage',
-      price: 27.99,
-      image: 'https://images.unsplash.com/photo-1616627577385-5c0c4dab0257?w=800&q=80'
-    },
-    {
-      id: 5,
-      name: 'Cape de bain bébé',
-      description: 'Cape de bain douce avec oreilles mignonnes',
-      price: 32.99,
-      image: 'https://images.unsplash.com/photo-1619784299133-f691ffaea42f?w=800&q=80'
-    },
-    {
-      id: 6,
-      name: 'Serviette personnalisée',
-      description: 'Serviette brodée avec le prénom de bébé',
-      price: 39.99,
-      image: 'https://images.unsplash.com/photo-1618842676088-c4d48a6a7c9d?w=800&q=80'
-    }
-  ];
+// Fonction pour récupérer les produits depuis Supabase
+async function getProducts() {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('category', 'Serviettes')
+    .order('id');
+
+  if (error) {
+    console.error('Erreur lors de la récupération des produits:', error);
+    return [];
+  }
+
+  return data;
+}
+
+export default async function ServiettesPage() {
+  const serviettes = await getProducts();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
@@ -81,13 +63,14 @@ export default function ServiettesPage() {
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {serviettes.map((serviette) => (
-          <div 
+          <Link 
             key={serviette.id}
+            href={`/produit/${serviette.id}`}
             className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition group"
           >
             <div className="relative aspect-square overflow-hidden">
               <Image
-                src={serviette.image}
+                src={serviette.image_url}
                 alt={serviette.name}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -102,15 +85,15 @@ export default function ServiettesPage() {
                 {serviette.description}
               </p>
               <div className="flex items-center justify-between">
-                <span className="text-xl font-bold text-pink-500">
-                  {serviette.price.toFixed(2)} €
+                <span className="text-pink-500 font-semibold">
+                  {serviette.price.toFixed(2)}€
                 </span>
                 <button className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition">
-                  Ajouter au panier
+                  Voir le produit
                 </button>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
