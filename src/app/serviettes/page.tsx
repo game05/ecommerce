@@ -5,22 +5,60 @@ import { supabase } from '@/lib/supabase';
 
 // Fonction pour récupérer les produits depuis Supabase
 async function getProducts() {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('category', 'Serviettes')
-    .order('id');
+  try {
+    console.log('Tentative de récupération des produits depuis Supabase...');
+    
+    // Vérification de la connexion Supabase
+    const { data: connectionTest, error: connectionError } = await supabase.from('products').select('count');
+    if (connectionError) {
+      console.error('Erreur de connexion à Supabase:', connectionError.message);
+      throw new Error('Erreur de connexion à la base de données');
+    }
+    console.log('Connexion à Supabase établie');
 
-  if (error) {
-    console.error('Erreur lors de la récupération des produits:', error);
+    // Récupération des produits
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('category', 'Serviettes')
+      .order('id');
+
+    if (error) {
+      console.error('Erreur lors de la récupération des produits:', error.message);
+      throw error;
+    }
+
+    if (!data) {
+      console.log('Aucun produit trouvé');
+      return [];
+    }
+
+    console.log('Produits récupérés avec succès:', data);
+    return data;
+  } catch (error) {
+    console.error('Erreur inattendue:', error);
     return [];
   }
-
-  return data;
 }
 
 export default async function ServiettesPage() {
   const serviettes = await getProducts();
+
+  // Vérification des données
+  if (!serviettes || serviettes.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-gray-900">
+            Aucun produit disponible pour le moment
+          </h2>
+          <p className="mt-2 text-gray-600">
+            Veuillez réessayer ultérieurement ou contactez-nous pour plus d'informations.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
