@@ -1,54 +1,51 @@
-// Désactive la mise en cache de la page
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { Bath, Heart, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useEffect, useState } from 'react';
+import Loading from '@/components/loading';
 
-// Fonction pour récupérer les produits depuis Supabase
-async function getProducts() {
-  try {
-    console.log('Tentative de récupération des produits depuis Supabase...');
-    
-    // Vérification de la connexion Supabase
-    const { data: connectionTest, error: connectionError } = await supabase.from('products').select('count');
-    if (connectionError) {
-      console.error('Erreur de connexion à Supabase:', connectionError.message);
-      throw new Error('Erreur de connexion à la base de données');
+// Type pour les produits
+type Product = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
+  stock: number;
+};
+
+export default function ServiettesPage() {
+  const [serviettes, setServiettes] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function getProducts() {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('category', 'Serviettes')
+          .order('id');
+
+        if (error) throw error;
+        setServiettes(data || []);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des produits:', error);
+      } finally {
+        setLoading(false);
+      }
     }
-    console.log('Connexion à Supabase établie');
 
-    // Récupération des produits
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('category', 'Serviettes')
-      .order('id');
+    getProducts();
+  }, []);
 
-    if (error) {
-      console.error('Erreur lors de la récupération des produits:', error.message);
-      throw error;
-    }
-
-    if (!data) {
-      console.log('Aucun produit trouvé');
-      return [];
-    }
-
-    console.log('Produits récupérés avec succès:', data);
-    return data;
-  } catch (error) {
-    console.error('Erreur inattendue:', error);
-    return [];
+  if (loading) {
+    return <Loading />;
   }
-}
 
-export default async function ServiettesPage() {
-  const serviettes = await getProducts();
-
-  // Vérification des données
   if (!serviettes || serviettes.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
