@@ -1,6 +1,4 @@
-// Désactive la mise en cache de la page
-export const revalidate = 0;
-export const dynamic = 'force-dynamic';
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -74,6 +72,9 @@ export default async function ProductPage({ params }: { params: { slug: string }
     );
   }
 
+  // Création du slug pour la personnalisation
+  const personalizationSlug = encodeURIComponent(product.name.toLowerCase().replace(/ /g, '-'));
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -130,35 +131,33 @@ export default async function ProductPage({ params }: { params: { slug: string }
           </div>
 
           {/* Bouton de personnalisation */}
-          <Link
-            href={product.stock > 0 ? `/personnalisation/${encodeURIComponent(product.name.toLowerCase().replace(/ /g, '-'))}` : '#'}
-            className={`w-full inline-block text-center px-6 py-3 rounded-full font-medium transition-all duration-300 animate-slideUp delay-400
-              ${product.stock > 0 
-                ? 'bg-pink-500 text-white hover:bg-pink-600 hover:scale-105 transform flex items-center justify-center gap-2' 
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-            onClick={e => product.stock === 0 && e.preventDefault()}
-          >
-            {product.stock > 0 ? (
-              <>
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="20" 
-                  height="20" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  className="animate-pulse"
-                >
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                </svg>
-                Commencer la personnalisation
-              </>
-            ) : 'Indisponible'}
-          </Link>
+          {product.stock > 0 ? (
+            <Link
+              href={`/personnalisation/${personalizationSlug}`}
+              className="w-full inline-block text-center px-6 py-3 rounded-full font-medium transition-all duration-300 animate-slideUp delay-400 bg-pink-500 text-white hover:bg-pink-600 hover:scale-105 transform flex items-center justify-center gap-2"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="20" 
+                height="20" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="animate-pulse"
+              >
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+              Commencer la personnalisation
+            </Link>
+          ) : (
+            <div className="w-full px-6 py-3 rounded-full font-medium bg-gray-300 text-gray-500 cursor-not-allowed text-center">
+              Indisponible
+            </div>
+          )}
 
           {/* Informations supplémentaires */}
           <div className="border-t border-gray-200 pt-6 space-y-4 animate-slideUp delay-500">
