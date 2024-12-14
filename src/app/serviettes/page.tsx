@@ -112,31 +112,34 @@ export default async function ServiettesPage() {
             <Link 
               key={serviette.id}
               href={`/produit/${slug}`}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition group"
+              prefetch={true}
+              className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 ease-in-out"
             >
-              <div className="relative aspect-square overflow-hidden">
+              <div className="relative aspect-square overflow-hidden bg-gray-100">
                 <Image
                   src={serviette.image_url}
                   alt={serviette.name}
                   fill
+                  priority
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  loading="eager"
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-pink-500 transition-colors">
                   {serviette.name}
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 mb-4 line-clamp-2">
                   {serviette.description}
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-pink-500 font-semibold">
                     {serviette.price.toFixed(2)}€
                   </span>
-                  <button className="bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600 transition">
+                  <span className="inline-flex items-center bg-pink-500 text-white px-4 py-2 rounded-full group-hover:bg-pink-600 transition-colors">
                     Voir le produit
-                  </button>
+                  </span>
                 </div>
               </div>
             </Link>

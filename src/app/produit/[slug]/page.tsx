@@ -77,35 +77,42 @@ export default async function ProductPage({ params }: { params: { slug: string }
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Image du produit */}
-        <div className="relative aspect-square rounded-lg overflow-hidden">
+        <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
           <Image
             src={product.image_url}
             alt={product.name}
             fill
-            className="object-cover"
             priority
+            className="object-cover"
             sizes="(max-width: 768px) 100vw, 50vw"
+            loading="eager"
           />
         </div>
 
         {/* Détails du produit */}
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fadeIn">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
-            <p className="text-lg text-pink-500 font-semibold mt-2">
+            <h1 className="text-3xl font-bold text-gray-900 animate-slideUp">
+              {product.name}
+            </h1>
+            <p className="text-lg text-pink-500 font-semibold mt-2 animate-slideUp delay-100">
               {product.price.toFixed(2)}€
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 animate-slideUp delay-200">
             <p className="text-gray-600">{product.description}</p>
 
             {product.details && product.details.length > 0 && (
               <div className="space-y-2">
-                <h2 className="text-lg font-semibold text-gray-900">Caractéristiques :</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Caractéristiques :
+                </h2>
                 <ul className="list-disc list-inside space-y-1 text-gray-600">
                   {product.details.map((detail: string, index: number) => (
-                    <li key={index}>{detail}</li>
+                    <li key={index} className="animate-slideUp" style={{ animationDelay: `${300 + index * 100}ms` }}>
+                      {detail}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -113,7 +120,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
           </div>
 
           {/* Stock */}
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 animate-slideUp delay-300">
             {product.stock > 0 ? (
               <span className="text-green-600">En stock ({product.stock} disponibles)</span>
             ) : (
@@ -123,9 +130,9 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
           {/* Bouton d'ajout au panier */}
           <button
-            className={`w-full px-6 py-3 rounded-full font-medium transition
+            className={`w-full px-6 py-3 rounded-full font-medium transition-all duration-300 animate-slideUp delay-400
               ${product.stock > 0 
-                ? 'bg-pink-500 text-white hover:bg-pink-600' 
+                ? 'bg-pink-500 text-white hover:bg-pink-600 hover:scale-105 transform' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
             disabled={product.stock === 0}
           >
@@ -133,7 +140,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
           </button>
 
           {/* Informations supplémentaires */}
-          <div className="border-t border-gray-200 pt-6 space-y-4">
+          <div className="border-t border-gray-200 pt-6 space-y-4 animate-slideUp delay-500">
             <div>
               <h3 className="text-sm font-medium text-gray-900">Livraison</h3>
               <p className="mt-1 text-sm text-gray-600">
