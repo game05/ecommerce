@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import Loading from '@/components/loading';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { CartProvider } from '@/providers/CartProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,13 +22,15 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={inter.className}>
-        <Navbar />
-        <main className="min-h-screen pt-16">
-          <Suspense fallback={<Loading />}>
-            {children}
-          </Suspense>
-        </main>
-        <Footer />
+        <CartProvider>
+          <Navbar />
+          <main className="min-h-screen pt-16">
+            <Suspense fallback={<Loading />}>
+              {children}
+            </Suspense>
+          </main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

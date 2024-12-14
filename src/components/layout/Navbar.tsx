@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { ShoppingCart, Search, Bath } from 'lucide-react';
-import { useState } from 'react';
 import { SlideCart } from '../cart/SlideCart';
 import { MobileMenu } from './MobileMenu';
+import { useCart } from '@/hooks/useCart';
 
 export const Navbar = () => {
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { items, isOpen, toggleCart } = useCart();
+  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <>
@@ -39,13 +40,15 @@ export const Navbar = () => {
                 <Search className="h-5 w-5 md:h-6 md:w-6" />
               </button>
               <button 
-                className="text-gray-700 hover:text-primary transition relative"
-                onClick={() => setIsCartOpen(true)}
+                className="text-gray-700 hover:text-primary transition relative cart-icon"
+                onClick={toggleCart}
               >
                 <ShoppingCart className="h-5 w-5 md:h-6 md:w-6" />
-                <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  0
-                </span>
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {itemCount}
+                  </span>
+                )}
               </button>
             </div>
           </div>
@@ -54,8 +57,8 @@ export const Navbar = () => {
 
       {/* Slide Cart */}
       <SlideCart 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
+        isOpen={isOpen}
+        onClose={toggleCart}
       />
     </>
   );
