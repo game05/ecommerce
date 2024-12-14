@@ -1,3 +1,7 @@
+// Désactive la mise en cache de la page
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/supabase';

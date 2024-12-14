@@ -1,3 +1,7 @@
+// Désactive la mise en cache de la page
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Bath, Heart, Sparkles } from 'lucide-react';
