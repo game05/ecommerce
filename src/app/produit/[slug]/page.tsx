@@ -3,6 +3,7 @@ export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -129,12 +130,13 @@ export default async function ProductPage({ params }: { params: { slug: string }
           </div>
 
           {/* Bouton de personnalisation */}
-          <button
-            className={`w-full px-6 py-3 rounded-full font-medium transition-all duration-300 animate-slideUp delay-400
+          <Link
+            href={product.stock > 0 ? `/personnalisation/${encodeURIComponent(product.name.toLowerCase().replace(/ /g, '-'))}` : '#'}
+            className={`w-full inline-block text-center px-6 py-3 rounded-full font-medium transition-all duration-300 animate-slideUp delay-400
               ${product.stock > 0 
                 ? 'bg-pink-500 text-white hover:bg-pink-600 hover:scale-105 transform flex items-center justify-center gap-2' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-            disabled={product.stock === 0}
+            onClick={e => product.stock === 0 && e.preventDefault()}
           >
             {product.stock > 0 ? (
               <>
@@ -156,7 +158,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
                 Commencer la personnalisation
               </>
             ) : 'Indisponible'}
-          </button>
+          </Link>
 
           {/* Informations supplémentaires */}
           <div className="border-t border-gray-200 pt-6 space-y-4 animate-slideUp delay-500">
