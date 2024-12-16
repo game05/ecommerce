@@ -24,10 +24,13 @@ export default function ConfirmationPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const paymentId = searchParams.get('id');
+    const success = searchParams.get('success');
+    const paymentId = searchParams.get('payment_id');
     
-    if (!paymentId) {
-      console.log('Pas d\'ID de paiement, redirection vers l\'accueil');
+    console.log('Paramètres URL:', { success, paymentId });
+    
+    if (!success || !paymentId) {
+      console.log('Paramètres manquants, redirection vers l\'accueil');
       router.push('/');
       return;
     }
@@ -50,6 +53,11 @@ export default function ConfirmationPage() {
         const data = await response.json();
         console.log('Réponse de vérification:', data);
         
+        if (data.status !== 'paid') {
+          console.error('Statut de paiement invalide:', data.status);
+          throw new Error('Paiement non confirmé');
+        }
+
         setOrderDetails(data);
         setLoading(false);
       } catch (error) {

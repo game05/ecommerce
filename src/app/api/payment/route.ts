@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       currency: 'EUR',
       notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/payplug`,
       hosted_payment: {
-        return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation`,
+        return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation?success=true&payment_id={payment_id}`,
         cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/annulation`
       },
       customer: {
