@@ -4,6 +4,7 @@ import { X, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useCart } from '@/hooks/useCart';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 interface SlideCartProps {
@@ -14,11 +15,18 @@ interface SlideCartProps {
 export const SlideCart = ({ isOpen, onClose }: SlideCartProps) => {
   const { items, removeFromCart, updateQuantity, closeCart } = useCart();
   const pathname = usePathname();
+  const router = useRouter();
+
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   useEffect(() => {
     closeCart();
   }, [pathname, closeCart]);
+
+  const handleCheckout = () => {
+    closeCart();
+    router.push('/commande');
+  };
 
   return (
     <>
@@ -123,13 +131,14 @@ export const SlideCart = ({ isOpen, onClose }: SlideCartProps) => {
             <span className="font-medium">Total</span>
             <span className="font-medium">{total.toFixed(2)} €</span>
           </div>
-          <button 
-            className="w-full bg-pink-500 text-white py-3 rounded-full hover:bg-pink-600 transition font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={() => {/* Handle checkout */}}
-            disabled={items.length === 0}
-          >
-            Commander
-          </button>
+          <div className="mt-4">
+            <button
+              onClick={handleCheckout}
+              className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90 transition-colors"
+            >
+              Commander ({total.toFixed(2)} €)
+            </button>
+          </div>
         </div>
       </div>
     </>
