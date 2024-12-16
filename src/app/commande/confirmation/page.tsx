@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCart } from '@/hooks/useCart';
+import Link from 'next/link';
 
 interface OrderDetails {
   id: string;
@@ -22,6 +23,8 @@ export default function ConfirmationPage() {
   const { clearCart } = useCart();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+  const [paymentId, setPaymentId] = useState<string | null>(null);
 
   useEffect(() => {
     const success = searchParams.get('success');
@@ -71,10 +74,13 @@ export default function ConfirmationPage() {
         }
 
         setOrderDetails(data);
+        setPaymentStatus(data.status);
+        setPaymentId(paymentId);
         setLoading(false);
       } catch (error) {
         console.error('Erreur lors de la vérification:', error);
-        router.push('/');
+        setPaymentStatus('error');
+        setLoading(false);
       }
     };
 
@@ -98,68 +104,39 @@ export default function ConfirmationPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:p-6">
-            <div className="text-center mb-8">
-              <svg
-                className="mx-auto h-12 w-12 text-green-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <h2 className="mt-4 text-3xl font-extrabold text-gray-900">
-                Merci pour votre commande !
-              </h2>
-              <p className="mt-2 text-gray-600">
-                Votre commande a été confirmée et sera bientôt traitée.
-              </p>
-            </div>
-
-            <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-              <dl className="sm:divide-y sm:divide-gray-200">
-                <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">
-                    Numéro de commande
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {orderDetails.id}
-                  </dd>
+            {paymentStatus === 'paid' ? (
+              <div className="text-center">
+                <h1 className="text-2xl font-bold mb-4">Merci pour votre commande !</h1>
+                <p className="mb-4">Votre paiement a été confirmé.</p>
+                <p className="mb-4">Numéro de commande : {paymentId}</p>
+                
+                <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                  <Link 
+                    href="/" 
+                    className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/80 transition-colors"
+                  >
+                    Continuer mes achats
+                  </Link>
+                  <Link 
+                    href="/mon-compte" 
+                    className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors"
+                  >
+                    Voir mes commandes
+                  </Link>
                 </div>
-                <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">
-                    Date de commande
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {new Date(orderDetails.created_at).toLocaleDateString('fr-FR', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </dd>
-                </div>
-                <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Montant</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {(orderDetails.amount / 100).toFixed(2)} €
-                  </dd>
-                </div>
-                <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-                  <dt className="text-sm font-medium text-gray-500">Client</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {orderDetails.customer.first_name} {orderDetails.customer.last_name}
-                    <br />
-                    {orderDetails.customer.email}
-                  </dd>
-                </div>
-              </dl>
-            </div>
+              </div>
+            ) : (
+              <div className="text-center">
+                <h1 className="text-2xl font-bold mb-4">Une erreur est survenue</h1>
+                <p className="mb-4">Le paiement n'a pas pu être vérifié.</p>
+                <Link 
+                  href="/commande" 
+                  className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/80 transition-colors"
+                >
+                  Réessayer
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
