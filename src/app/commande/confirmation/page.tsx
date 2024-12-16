@@ -27,33 +27,34 @@ export default function ConfirmationPage() {
     const paymentId = searchParams.get('id');
     
     if (!paymentId) {
-      // Si pas d'ID de paiement, rediriger vers la page d'accueil
+      console.log('Pas d\'ID de paiement, redirection vers l\'accueil');
       router.push('/');
       return;
     }
 
+    // Vider le panier immédiatement
+    clearCart();
+    console.log('Panier vidé');
+
     // Vérifier le statut du paiement
     const checkPayment = async () => {
       try {
+        console.log('Vérification du paiement:', paymentId);
         const response = await fetch(`/api/payment/verify?id=${paymentId}`);
+        
         if (!response.ok) {
+          console.error('Erreur de réponse:', response.status);
           throw new Error('Erreur lors de la vérification du paiement');
         }
 
         const data = await response.json();
-        if (data.status === 'paid') {
-          setOrderDetails(data);
-          // Vider le panier uniquement si le paiement est confirmé
-          clearCart();
-        } else {
-          // Si le paiement n'est pas confirmé, rediriger vers la page d'accueil
-          router.push('/');
-        }
-      } catch (error) {
-        console.error('Erreur:', error);
-        router.push('/');
-      } finally {
+        console.log('Réponse de vérification:', data);
+        
+        setOrderDetails(data);
         setLoading(false);
+      } catch (error) {
+        console.error('Erreur lors de la vérification:', error);
+        router.push('/');
       }
     };
 

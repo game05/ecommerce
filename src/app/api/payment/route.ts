@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/payplug`,
       hosted_payment: {
         return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation`,
-        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande`
+        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/annulation`
       },
       customer: {
         email: orderData.email,
