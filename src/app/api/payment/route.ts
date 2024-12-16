@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       currency: 'EUR',
       notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/payplug`,
       hosted_payment: {
-        return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation?success=true&payment_id={payment_id}`,
+        return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation?success=true`,
         cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/annulation`
       },
       customer: {
@@ -53,7 +53,12 @@ export async function POST(request: Request) {
 
     const payment = await response.json();
     console.log('Paiement créé avec succès:', payment);
-    return NextResponse.json(payment);
+
+    // On renvoie l'URL de paiement et l'ID
+    return NextResponse.json({
+      payment_url: payment.hosted_payment.payment_url,
+      payment_id: payment.id
+    });
   } catch (error) {
     console.error('Erreur serveur PayPlug:', error);
     return NextResponse.json(

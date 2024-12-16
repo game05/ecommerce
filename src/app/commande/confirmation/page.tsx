@@ -25,12 +25,21 @@ export default function ConfirmationPage() {
 
   useEffect(() => {
     const success = searchParams.get('success');
-    const paymentId = searchParams.get('payment_id');
     
-    console.log('Paramètres URL:', { success, paymentId });
+    console.log('Paramètres URL:', { success });
     
-    if (!success || !paymentId) {
+    if (!success) {
       console.log('Paramètres manquants, redirection vers l\'accueil');
+      router.push('/');
+      return;
+    }
+
+    // Récupérer l'ID du paiement depuis le localStorage
+    const paymentId = localStorage.getItem('current_payment_id');
+    console.log('ID de paiement récupéré:', paymentId);
+
+    if (!paymentId) {
+      console.log('ID de paiement non trouvé, redirection vers l\'accueil');
       router.push('/');
       return;
     }
@@ -38,6 +47,9 @@ export default function ConfirmationPage() {
     // Vider le panier immédiatement
     clearCart();
     console.log('Panier vidé');
+
+    // Supprimer l'ID du paiement du localStorage
+    localStorage.removeItem('current_payment_id');
 
     // Vérifier le statut du paiement
     const checkPayment = async () => {

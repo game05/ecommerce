@@ -58,9 +58,14 @@ export default function CommandePage() {
         }
       });
 
+      // Stocker l'ID du paiement dans le localStorage
+      if (payment.payment_id) {
+        localStorage.setItem('current_payment_id', payment.payment_id);
+      }
+
       // Redirection vers la page de paiement PayPlug
-      if (payment.hosted_payment?.payment_url) {
-        window.location.href = payment.hosted_payment.payment_url;
+      if (payment.payment_url) {
+        window.location.href = payment.payment_url;
       } else {
         throw new Error('URL de paiement non disponible');
       }
