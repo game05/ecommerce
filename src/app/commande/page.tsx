@@ -4,6 +4,7 @@ import { useCart } from '@/hooks/useCart';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { createPayment } from '@/lib/payplug';
 
 interface FormData {
   nom: string;
@@ -18,6 +19,7 @@ interface FormData {
 export default function CommandePage() {
   const { items, clearCart } = useCart();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     nom: '',
     prenom: '',
@@ -40,9 +42,33 @@ export default function CommandePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implémenter l'envoi de la commande
-    clearCart();
-    router.push('/commande/confirmation');
+    setIsLoading(true);
+
+    try {
+      const payment = await createPayment({
+        amount: total,
+        email: formData.email,
+        first_name: formData.prenom,
+        last_name: formData.nom,
+        shipping_address: {
+          street_address: formData.adresse,
+          postcode: formData.codePostal,
+          city: formData.ville,
+          country: 'FR'
+        }
+      });
+
+      // Redirection vers la page de paiement PayPlug
+      if (payment.hosted_payment?.url) {
+        window.location.href = payment.hosted_payment.url;
+      } else {
+        throw new Error('URL de paiement non disponible');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création du paiement:', error);
+      alert('Une erreur est survenue lors de la création du paiement. Veuillez réessayer.');
+      setIsLoading(false);
+    }
   };
 
   if (items.length === 0) {
@@ -168,9 +194,10 @@ export default function CommandePage() {
 
             <button
               type="submit"
-              className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90 transition-colors"
+              disabled={isLoading}
+              className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Commander ({total.toFixed(2)} €)
+              {isLoading ? 'Chargement...' : 'Procéder au paiement'}
             </button>
           </form>
         </div>
