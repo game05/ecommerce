@@ -67,6 +67,9 @@ export default function CommandePage() {
       // Stocker l'ID du paiement dans le localStorage
       localStorage.setItem('current_payment_id', response.payment_id);
 
+      // Attendre un peu avant de rediriger
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       // Redirection vers la page de paiement PayPlug
       window.location.href = response.payment_url;
     } catch (error) {
