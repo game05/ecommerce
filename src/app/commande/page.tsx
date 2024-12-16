@@ -59,8 +59,8 @@ export default function CommandePage() {
       });
 
       // Redirection vers la page de paiement PayPlug
-      if (payment.hosted_payment?.url) {
-        window.location.href = payment.hosted_payment.url;
+      if (payment.hosted_payment?.payment_url) {
+        window.location.href = payment.hosted_payment.payment_url;
       } else {
         throw new Error('URL de paiement non disponible');
       }

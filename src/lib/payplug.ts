@@ -15,6 +15,13 @@ interface PaymentData {
   };
 }
 
+interface PaymentResponse {
+  hosted_payment: {
+    payment_url: string;
+  };
+  [key: string]: any;
+}
+
 export async function createPayment(orderData: PaymentData) {
   try {
     console.log('Envoi de la demande de paiement:', orderData);
@@ -33,8 +40,13 @@ export async function createPayment(orderData: PaymentData) {
       throw new Error(errorData.error || 'Erreur lors de la création du paiement');
     }
 
-    const payment = await response.json();
+    const payment = await response.json() as PaymentResponse;
     console.log('Réponse de paiement reçue:', payment);
+    
+    if (!payment.hosted_payment?.payment_url) {
+      throw new Error('URL de paiement non disponible');
+    }
+
     return payment;
   } catch (error) {
     console.error('Erreur lors de la création du paiement:', error);
