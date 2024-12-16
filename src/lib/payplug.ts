@@ -16,13 +16,11 @@ interface PaymentData {
 }
 
 interface PaymentResponse {
-  hosted_payment: {
-    payment_url: string;
-  };
-  [key: string]: any;
+  payment_url: string;
+  payment_id: string;
 }
 
-export async function createPayment(orderData: PaymentData) {
+export async function createPayment(orderData: PaymentData): Promise<PaymentResponse> {
   try {
     console.log('Envoi de la demande de paiement:', orderData);
     
@@ -40,11 +38,11 @@ export async function createPayment(orderData: PaymentData) {
       throw new Error(errorData.error || 'Erreur lors de la création du paiement');
     }
 
-    const payment = await response.json() as PaymentResponse;
+    const payment = await response.json();
     console.log('Réponse de paiement reçue:', payment);
-    
-    if (!payment.hosted_payment?.payment_url) {
-      throw new Error('URL de paiement non disponible');
+
+    if (!payment.payment_url || !payment.payment_id) {
+      throw new Error('Réponse de paiement invalide');
     }
 
     return payment;

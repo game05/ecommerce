@@ -45,7 +45,7 @@ export default function CommandePage() {
     setIsLoading(true);
 
     try {
-      const payment = await createPayment({
+      const response = await createPayment({
         amount: total,
         email: formData.email,
         first_name: formData.prenom,
@@ -58,20 +58,21 @@ export default function CommandePage() {
         }
       });
 
-      // Stocker l'ID du paiement dans le localStorage
-      if (payment.payment_id) {
-        localStorage.setItem('current_payment_id', payment.payment_id);
+      console.log('Réponse du paiement:', response);
+
+      if (!response || !response.payment_url || !response.payment_id) {
+        throw new Error('Réponse de paiement invalide');
       }
 
+      // Stocker l'ID du paiement dans le localStorage
+      localStorage.setItem('current_payment_id', response.payment_id);
+
       // Redirection vers la page de paiement PayPlug
-      if (payment.payment_url) {
-        window.location.href = payment.payment_url;
-      } else {
-        throw new Error('URL de paiement non disponible');
-      }
+      window.location.href = response.payment_url;
     } catch (error) {
       console.error('Erreur lors de la création du paiement:', error);
       alert('Une erreur est survenue lors de la création du paiement. Veuillez réessayer.');
+    } finally {
       setIsLoading(false);
     }
   };
