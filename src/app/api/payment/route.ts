@@ -12,8 +12,10 @@ export async function POST(request: Request) {
       amount: Math.round(orderData.amount * 100),
       currency: 'EUR',
       notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/payplug`,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande`,
+      hosted_payment: {
+        return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation`,
+        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande`
+      },
       customer: {
         email: orderData.email,
         first_name: orderData.first_name,
