@@ -8,39 +8,36 @@ export async function POST(request: Request) {
     const orderData = await request.json();
     console.log('Création du paiement avec les données:', orderData);
 
+    const paymentData = {
+      amount: Math.round(orderData.amount * 100),
+      currency: 'EUR',
+      notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/payplug`,
+      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande`,
+      customer: {
+        email: orderData.email,
+        first_name: orderData.first_name,
+        last_name: orderData.last_name,
+        address1: orderData.shipping_address.street_address,
+        postcode: orderData.shipping_address.postcode,
+        city: orderData.shipping_address.city,
+        country: orderData.shipping_address.country
+      },
+      force_3ds: true,
+      metadata: {
+        customer_id: orderData.email
+      }
+    };
+
+    console.log('Envoi des données à PayPlug:', paymentData);
+
     const response = await fetch(`${PAYPLUG_API_URL}/payments`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${PAYPLUG_API_KEY}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        amount: Math.round(orderData.amount * 100),
-        currency: 'EUR',
-        notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/payplug`,
-        hosted_payment: {
-          return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation`,
-          cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande`
-        },
-        billing: {
-          email: orderData.email,
-          first_name: orderData.first_name,
-          last_name: orderData.last_name
-        },
-        shipping: {
-          delivery_type: 'BILLING',
-          address: {
-            ...orderData.shipping_address,
-            country: 'FR'
-          }
-        },
-        metadata: {
-          customer_id: orderData.email
-        },
-        force_3ds: true,
-        save_card: false,
-        allow_save_card: false
-      })
+      body: JSON.stringify(paymentData)
     });
 
     if (!response.ok) {
