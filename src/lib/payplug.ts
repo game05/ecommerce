@@ -16,53 +16,28 @@ interface PaymentData {
 }
 
 export async function createPayment(orderData: PaymentData) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-
   try {
-    const response = await fetch(`${PAYPLUG_API_URL}/payments`, {
+    console.log('Envoi de la demande de paiement:', orderData);
+    
+    const response = await fetch('/api/payment', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${PAYPLUG_API_KEY}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        amount: Math.round(orderData.amount * 100), // Conversion en centimes
-        currency: 'EUR',
-        notification_url: `${siteUrl}/api/webhooks/payplug`,
-        hosted_payment: {
-          return_url: `${siteUrl}/commande/confirmation`,
-          cancel_url: `${siteUrl}/commande`
-        },
-        billing: {
-          email: orderData.email,
-          first_name: orderData.first_name,
-          last_name: orderData.last_name
-        },
-        shipping: {
-          delivery_type: 'BILLING',
-          address: {
-            ...orderData.shipping_address,
-            country: 'FR'
-          }
-        },
-        metadata: {
-          customer_id: orderData.email
-        },
-        force_3ds: true, // Activer systématiquement le 3D Secure pour plus de sécurité
-        save_card: false, // Ne pas sauvegarder la carte
-        allow_save_card: false
-      })
+      body: JSON.stringify(orderData)
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Erreur lors de la création du paiement');
+      console.error('Erreur réponse API:', errorData);
+      throw new Error(errorData.error || 'Erreur lors de la création du paiement');
     }
 
     const payment = await response.json();
+    console.log('Réponse de paiement reçue:', payment);
     return payment;
   } catch (error) {
-    console.error('Erreur PayPlug:', error);
+    console.error('Erreur lors de la création du paiement:', error);
     throw error;
   }
 }
