@@ -1,12 +1,9 @@
 import { NextResponse } from 'next/server';
 
-const PAYPLUG_API_KEY = process.env.NEXT_PUBLIC_PAYPLUG_SECRET_KEY;
-const PAYPLUG_API_URL = 'https://api.payplug.com/v1';
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const paymentId = searchParams.get('id');
+    const paymentId = searchParams.get('payment_id');
 
     if (!paymentId) {
       return NextResponse.json(
@@ -15,27 +12,39 @@ export async function GET(request: Request) {
       );
     }
 
-    const response = await fetch(`${PAYPLUG_API_URL}/payments/${paymentId}`, {
+    // Récupérer la clé API PayPlug
+    const apiKey = process.env.NEXT_PUBLIC_PAYPLUG_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error('Clé API PayPlug non configurée');
+    }
+
+    // Vérifier le paiement avec PayPlug
+    const response = await fetch(`https://api.payplug.com/v1/payments/${paymentId}`, {
       headers: {
-        'Authorization': `Bearer ${PAYPLUG_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       }
     });
 
     if (!response.ok) {
-      console.error('Erreur PayPlug:', await response.text());
-      return NextResponse.json(
-        { error: 'Erreur lors de la vérification du paiement' },
-        { status: response.status }
-      );
+      throw new Error(`Erreur PayPlug: ${response.statusText}`);
     }
 
     const payment = await response.json();
-    console.log('Détails du paiement:', payment);
 
-    return NextResponse.json(payment);
+    return NextResponse.json({
+      status: payment.is_paid ? 'paid' : 'pending',
+      payment_id: payment.id,
+      amount: payment.amount,
+      customer: {
+        first_name: payment.billing?.first_name,
+        last_name: payment.billing?.last_name,
+        email: payment.billing?.email
+      }
+    });
+
   } catch (error) {
-    console.error('Erreur serveur:', error);
+    console.error('Erreur lors de la vérification du paiement:', error);
     return NextResponse.json(
       { error: 'Erreur lors de la vérification du paiement' },
       { status: 500 }
