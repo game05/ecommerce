@@ -191,7 +191,7 @@ export default function CommandePage() {
               <div key={index} className="flex items-center space-x-4 border-b pb-4">
                 <div className="relative w-20 h-20">
                   <Image
-                    src={item.image}
+                    src={item.image_url}
                     alt={item.name}
                     fill
                     style={{ objectFit: 'cover' }}
