@@ -2,35 +2,51 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useCart } from '@/hooks/useCart';
 
 export default function ConfirmationPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { clearCart } = useCart();
+  const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
     const verifyPayment = async () => {
       try {
         const paymentId = searchParams.get('payment_id');
         
+        // Rediriger vers la page d'accueil si pas de payment_id
         if (!paymentId) {
+          router.push('/');
           return;
         }
 
         const response = await fetch(`/api/payment/verify?payment_id=${paymentId}`);
         const data = await response.json();
 
-        if (response.ok && data.status === 'paid') {
-          clearCart();
+        if (!response.ok || data.status !== 'paid') {
+          // Si le paiement n'est pas confirmé, rediriger vers le panier
+          router.push('/commande');
+          return;
         }
+
+        // Si le paiement est confirmé
+        clearCart();
+        setIsVerified(true);
       } catch (error) {
         console.error('Erreur:', error);
+        router.push('/commande');
       }
     };
 
     verifyPayment();
-  }, [searchParams, clearCart]);
+  }, [searchParams, clearCart, router]);
+
+  // Afficher rien pendant la vérification
+  if (!isVerified) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
