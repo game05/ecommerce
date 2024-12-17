@@ -17,7 +17,6 @@ interface PaymentData {
 interface PaymentResponse {
   payment_url: string;
   payment_id: string;
-  return_url?: string;
 }
 
 export async function createPayment(orderData: PaymentData): Promise<PaymentResponse> {
@@ -32,20 +31,21 @@ export async function createPayment(orderData: PaymentData): Promise<PaymentResp
       body: JSON.stringify(orderData)
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Erreur réponse API:', errorData);
-      throw new Error(errorData.error || 'Erreur lors de la création du paiement');
-    }
-
     const payment = await response.json();
     console.log('Réponse de paiement reçue:', payment);
 
-    if (!payment.payment_url || !payment.payment_id) {
-      throw new Error('Réponse de paiement invalide');
+    if (!response.ok) {
+      throw new Error(payment.error || 'Erreur lors de la création du paiement');
     }
 
-    return payment;
+    if (!payment.payment_url) {
+      throw new Error('URL de paiement manquante dans la réponse');
+    }
+
+    return {
+      payment_url: payment.payment_url,
+      payment_id: payment.payment_id
+    };
   } catch (error) {
     console.error('Erreur lors de la création du paiement:', error);
     throw error;

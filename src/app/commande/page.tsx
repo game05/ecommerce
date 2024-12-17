@@ -55,12 +55,12 @@ export default function CommandePage() {
         }
       });
 
-      if (!response || !response.payment_url || !response.payment_id) {
+      if (!response || !response.payment_url) {
         throw new Error('Réponse de paiement invalide');
       }
 
-      // Rediriger vers l'URL de paiement
-      window.location.href = response.return_url || response.payment_url;
+      // Rediriger vers l'URL de paiement PayPlug
+      window.location.href = response.payment_url;
     } catch (error) {
       console.error('Erreur lors de la création du paiement:', error);
       alert('Une erreur est survenue lors de la création du paiement. Veuillez réessayer.');
