@@ -6,6 +6,32 @@ import { useSearchParams } from 'next/navigation';
 import { useCart } from '@/hooks/useCart';
 
 export default function ConfirmationPage() {
+  const searchParams = useSearchParams();
+  const { clearCart } = useCart();
+
+  useEffect(() => {
+    const verifyPayment = async () => {
+      try {
+        const paymentId = searchParams.get('payment_id');
+        
+        if (!paymentId) {
+          return;
+        }
+
+        const response = await fetch(`/api/payment/verify?payment_id=${paymentId}`);
+        const data = await response.json();
+
+        if (response.ok && data.status === 'paid') {
+          clearCart();
+        }
+      } catch (error) {
+        console.error('Erreur:', error);
+      }
+    };
+
+    verifyPayment();
+  }, [searchParams, clearCart]);
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
