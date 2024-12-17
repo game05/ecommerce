@@ -1,5 +1,4 @@
 // Récupération de la clé API depuis les variables d'environnement
-const PAYPLUG_API_KEY = process.env.NEXT_PUBLIC_PAYPLUG_SECRET_KEY || 'sk_test_yugCPCAfcjcBYWEX2UlQw';
 const PAYPLUG_API_URL = 'https://api.payplug.com/v1';
 
 interface PaymentData {

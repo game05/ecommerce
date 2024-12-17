@@ -5,7 +5,10 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const paymentId = searchParams.get('payment_id');
 
+    console.log('Vérification du paiement ID:', paymentId);
+
     if (!paymentId) {
+      console.error('ID de paiement manquant dans la requête');
       return NextResponse.json(
         { error: 'ID de paiement manquant' },
         { status: 400 }
@@ -15,8 +18,11 @@ export async function GET(request: Request) {
     // Récupérer la clé API PayPlug
     const apiKey = process.env.NEXT_PUBLIC_PAYPLUG_SECRET_KEY;
     if (!apiKey) {
+      console.error('Clé API PayPlug non configurée');
       throw new Error('Clé API PayPlug non configurée');
     }
+
+    console.log('Envoi de la requête à PayPlug...');
 
     // Vérifier le paiement avec PayPlug
     const response = await fetch(`https://api.payplug.com/v1/payments/${paymentId}`, {
@@ -27,12 +33,25 @@ export async function GET(request: Request) {
     });
 
     if (!response.ok) {
-      throw new Error(`Erreur PayPlug: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Erreur PayPlug:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      throw new Error(`Erreur PayPlug: ${response.status} ${response.statusText}`);
     }
 
     const payment = await response.json();
+    console.log('Réponse PayPlug:', payment);
 
-    return NextResponse.json({
+    // Vérifier si le paiement existe et a un statut
+    if (!payment || typeof payment.is_paid === 'undefined') {
+      console.error('Réponse PayPlug invalide:', payment);
+      throw new Error('Réponse PayPlug invalide');
+    }
+
+    const responseData = {
       status: payment.is_paid ? 'paid' : 'pending',
       payment_id: payment.id,
       amount: payment.amount,
@@ -46,7 +65,11 @@ export async function GET(request: Request) {
         city: payment.shipping?.city || '',
         postcode: payment.shipping?.postcode || ''
       }
-    });
+    };
+
+    console.log('Envoi de la réponse:', responseData);
+
+    return NextResponse.json(responseData);
 
   } catch (error) {
     console.error('Erreur lors de la vérification du paiement:', error);
