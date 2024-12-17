@@ -59,12 +59,8 @@ export default function CommandePage() {
         throw new Error('Réponse de paiement invalide');
       }
 
-      // Rediriger vers l'URL de retour avec l'ID de paiement
-      if (response.return_url) {
-        window.location.href = response.payment_url;
-      } else {
-        throw new Error('URL de retour manquante');
-      }
+      // Rediriger vers l'URL de paiement
+      window.location.href = response.payment_url;
     } catch (error) {
       console.error('Erreur lors de la création du paiement:', error);
       alert('Une erreur est survenue lors de la création du paiement. Veuillez réessayer.');
@@ -195,7 +191,7 @@ export default function CommandePage() {
               <div key={index} className="flex items-center space-x-4 border-b pb-4">
                 <div className="relative w-20 h-20">
                   <Image
-                    src={item.image_url}
+                    src={item.image}
                     alt={item.name}
                     fill
                     style={{ objectFit: 'cover' }}
