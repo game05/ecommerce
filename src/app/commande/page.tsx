@@ -205,7 +205,7 @@ export default function CommandePage() {
               <div key={item.id} className="flex items-center gap-4 mb-4 last:mb-0">
                 <div className="relative w-16 h-16">
                   <Image
-                    src={item.image}
+                    src={item.image_url}
                     alt={item.name}
                     fill
                     className="object-cover rounded"
