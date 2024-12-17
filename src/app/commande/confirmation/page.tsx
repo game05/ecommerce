@@ -10,11 +10,11 @@ export default function ConfirmationPage() {
   const { clearCart } = useCart();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        // Récupérer l'ID de paiement des paramètres d'URL
         const paymentId = searchParams.get('payment_id');
         
         if (!paymentId) {
@@ -23,7 +23,6 @@ export default function ConfirmationPage() {
           return;
         }
 
-        // Vérifier le statut du paiement
         const response = await fetch(`/api/payment/verify?payment_id=${paymentId}`);
         const data = await response.json();
 
@@ -32,8 +31,10 @@ export default function ConfirmationPage() {
         }
 
         if (data.status === 'paid') {
-          // Vider le panier si le paiement est confirmé
+          setIsSuccess(true);
           clearCart();
+        } else {
+          setError('Le paiement n\'a pas été confirmé');
         }
 
         setLoading(false);
@@ -45,7 +46,7 @@ export default function ConfirmationPage() {
     };
 
     verifyPayment();
-  }, [clearCart, searchParams]);
+  }, [searchParams, clearCart]);
 
   if (loading) {
     return (
@@ -67,14 +68,12 @@ export default function ConfirmationPage() {
                 Une erreur est survenue
               </h1>
               <p className="text-gray-600 mb-8">{error}</p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Link 
-                  href="/commande"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Retourner au panier
-                </Link>
-              </div>
+              <Link 
+                href="/commande"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Retourner au panier
+              </Link>
             </div>
           </div>
         </div>
@@ -100,20 +99,18 @@ export default function ConfirmationPage() {
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            
-            <h1 className="text-2xl font-bold text-gray-900 mt-4 mb-4">
-              Merci pour votre commande !
+            <h1 className="mt-4 text-2xl font-bold text-gray-900">
+              Commande confirmée !
             </h1>
-            <p className="text-gray-600 mb-8">
-              Votre commande a été confirmée et sera bientôt traitée.
+            <p className="mt-2 text-gray-600">
+              Merci pour votre commande. Nous vous contacterons bientôt pour la livraison.
             </p>
-            
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link 
-                href="/" 
-                className="bg-primary text-white px-6 py-2 rounded-md hover:bg-primary/90 transition-colors"
+            <div className="mt-8">
+              <Link
+                href="/"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Continuer mes achats
+                Retour à l'accueil
               </Link>
             </div>
           </div>

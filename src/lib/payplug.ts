@@ -18,7 +18,6 @@ interface PaymentData {
 interface PaymentResponse {
   payment_url: string;
   payment_id: string;
-  return_url?: string;
 }
 
 export async function createPayment(orderData: PaymentData): Promise<PaymentResponse> {
