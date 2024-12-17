@@ -7,7 +7,7 @@ import { useCart } from '@/hooks/useCart';
 
 export default function ConfirmationPage() {
   const searchParams = useSearchParams();
-  const { clearCart } = useCart();
+  const { clearCart, items } = useCart();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +32,34 @@ export default function ConfirmationPage() {
         }
 
         if (data.status === 'paid') {
+          // Envoyer l'email de confirmation
+          const emailResponse = await fetch('/api/email/order-confirmation', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              orderNumber: paymentId,
+              customerName: `${data.customer.first_name} ${data.customer.last_name}`,
+              customerEmail: data.customer.email,
+              items: items.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price
+              })),
+              total: data.amount / 100,
+              shippingAddress: {
+                street: data.shipping_address?.street_address,
+                city: data.shipping_address?.city,
+                postcode: data.shipping_address?.postcode
+              }
+            })
+          });
+
+          if (!emailResponse.ok) {
+            console.error('Erreur lors de l\'envoi de l\'email de confirmation');
+          }
+
           // Vider le panier si le paiement est confirmé
           clearCart();
           // Supprimer l'ID de paiement du localStorage
@@ -47,7 +75,7 @@ export default function ConfirmationPage() {
     };
 
     verifyPayment();
-  }, [clearCart]);
+  }, [clearCart, items]);
 
   if (loading) {
     return (
