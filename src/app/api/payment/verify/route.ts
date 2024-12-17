@@ -37,9 +37,14 @@ export async function GET(request: Request) {
       payment_id: payment.id,
       amount: payment.amount,
       customer: {
-        first_name: payment.billing?.first_name,
-        last_name: payment.billing?.last_name,
-        email: payment.billing?.email
+        first_name: payment.billing?.first_name || '',
+        last_name: payment.billing?.last_name || '',
+        email: payment.billing?.email || ''
+      },
+      shipping_address: {
+        street_address: payment.shipping?.street1 || '',
+        city: payment.shipping?.city || '',
+        postcode: payment.shipping?.postcode || ''
       }
     });
 
