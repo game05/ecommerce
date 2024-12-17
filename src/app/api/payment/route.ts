@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       currency: 'EUR',
       notification_url: `${baseUrl}/api/webhooks/payplug`,
       hosted_payment: {
-        return_url: `${baseUrl}/commande/confirmation`,
+        return_url: `${baseUrl}/commande/confirmation?success=true`,
         cancel_url: `${baseUrl}/commande/annulation`
       },
       customer: {
@@ -67,10 +67,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    // Construire l'URL de retour avec l'ID de paiement
-    const returnUrl = new URL(paymentData.hosted_payment.return_url);
-    returnUrl.searchParams.set('payment_id', paymentResponse.id);
 
     return NextResponse.json({
       payment_url: paymentResponse.hosted_payment.payment_url,

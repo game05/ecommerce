@@ -55,9 +55,12 @@ export default function CommandePage() {
         }
       });
 
-      if (!response || !response.payment_url) {
+      if (!response || !response.payment_url || !response.payment_id) {
         throw new Error('Réponse de paiement invalide');
       }
+
+      // Stocker l'ID du paiement dans le localStorage
+      localStorage.setItem('current_payment_id', response.payment_id);
 
       // Rediriger vers l'URL de paiement PayPlug
       window.location.href = response.payment_url;
