@@ -2,15 +2,13 @@
 
 import { useCart } from '@/hooks/useCart';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { createPayment } from '@/lib/payplug';
 
 interface FormData {
-  nom: string;
   prenom: string;
+  nom: string;
   email: string;
-  telephone: string;
   adresse: string;
   codePostal: string;
   ville: string;
@@ -18,19 +16,18 @@ interface FormData {
 
 export default function CommandePage() {
   const { items, clearCart } = useCart();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    nom: '',
     prenom: '',
+    nom: '',
     email: '',
-    telephone: '',
     adresse: '',
     codePostal: '',
     ville: ''
   });
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const fraisLivraison = total >= 25 ? 0 : 4.99;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -46,7 +43,7 @@ export default function CommandePage() {
 
     try {
       const response = await createPayment({
-        amount: total,
+        amount: total + fraisLivraison,
         email: formData.email,
         first_name: formData.prenom,
         last_name: formData.nom,
@@ -58,19 +55,11 @@ export default function CommandePage() {
         }
       });
 
-      console.log('Réponse du paiement:', response);
-
       if (!response || !response.payment_url || !response.payment_id) {
         throw new Error('Réponse de paiement invalide');
       }
 
-      // Stocker l'ID du paiement dans le localStorage
       localStorage.setItem('current_payment_id', response.payment_id);
-
-      // Attendre un peu avant de rediriger
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Redirection vers la page de paiement PayPlug
       window.location.href = response.payment_url;
     } catch (error) {
       console.error('Erreur lors de la création du paiement:', error);
@@ -82,7 +71,7 @@ export default function CommandePage() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-2xl font-bold mb-4">Votre panier est vide</h1>
         <p>Ajoutez des articles à votre panier pour passer commande.</p>
       </div>
@@ -90,39 +79,15 @@ export default function CommandePage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
-      <div className="mb-12">
-        <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Finaliser votre{' '}
-            <span className="text-pink-500">commande</span>
-          </h1>
-          <p className="text-lg text-gray-600 mb-8">
-            Plus qu'une étape avant de recevoir vos produits personnalisés
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        {/* Formulaire de commande */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Informations de livraison</h2>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Formulaire de livraison */}
+        <div>
+          <h2 className="text-xl font-semibold mb-6">Informations de livraison</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="nom" className="block text-sm font-medium text-gray-700">Nom</label>
-                <input
-                  type="text"
-                  id="nom"
-                  name="nom"
-                  value={formData.nom}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-                />
-              </div>
-              <div>
-                <label htmlFor="prenom" className="block text-sm font-medium text-gray-700">Prénom</label>
+                <label htmlFor="prenom" className="block text-sm mb-1">Prénom</label>
                 <input
                   type="text"
                   id="prenom"
@@ -130,13 +95,27 @@ export default function CommandePage() {
                   value={formData.prenom}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                  className="w-full p-2 border rounded"
+                  placeholder="Jean"
+                />
+              </div>
+              <div>
+                <label htmlFor="nom" className="block text-sm mb-1">Nom</label>
+                <input
+                  type="text"
+                  id="nom"
+                  name="nom"
+                  value={formData.nom}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-2 border rounded"
+                  placeholder="Dupont"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+              <label htmlFor="email" className="block text-sm mb-1">Email</label>
               <input
                 type="email"
                 id="email"
@@ -144,25 +123,13 @@ export default function CommandePage() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                className="w-full p-2 border rounded"
+                placeholder="jean.dupont@example.com"
               />
             </div>
 
             <div>
-              <label htmlFor="telephone" className="block text-sm font-medium text-gray-700">Téléphone</label>
-              <input
-                type="tel"
-                id="telephone"
-                name="telephone"
-                value={formData.telephone}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="adresse" className="block text-sm font-medium text-gray-700">Adresse</label>
+              <label htmlFor="adresse" className="block text-sm mb-1">Adresse</label>
               <input
                 type="text"
                 id="adresse"
@@ -170,13 +137,14 @@ export default function CommandePage() {
                 value={formData.adresse}
                 onChange={handleChange}
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                className="w-full p-2 border rounded"
+                placeholder="123 rue de la Paix"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="codePostal" className="block text-sm font-medium text-gray-700">Code postal</label>
+                <label htmlFor="codePostal" className="block text-sm mb-1">Code postal</label>
                 <input
                   type="text"
                   id="codePostal"
@@ -184,11 +152,12 @@ export default function CommandePage() {
                   value={formData.codePostal}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                  className="w-full p-2 border rounded"
+                  placeholder="75000"
                 />
               </div>
               <div>
-                <label htmlFor="ville" className="block text-sm font-medium text-gray-700">Ville</label>
+                <label htmlFor="ville" className="block text-sm mb-1">Ville</label>
                 <input
                   type="text"
                   id="ville"
@@ -196,7 +165,8 @@ export default function CommandePage() {
                   value={formData.ville}
                   onChange={handleChange}
                   required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                  className="w-full p-2 border rounded"
+                  placeholder="Paris"
                 />
               </div>
             </div>
@@ -204,38 +174,77 @@ export default function CommandePage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors mt-6"
             >
               {isLoading ? 'Chargement...' : 'Procéder au paiement'}
             </button>
           </form>
+
+          <div className="flex justify-between items-center mt-8 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1V8a1 1 0 00-1-1h-3z" />
+              </svg>
+              <span>Livraison gratuite dès 25.0€ d'achat</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+              </svg>
+              <span>Paiement sécurisé Par PayPlug</span>
+            </div>
+          </div>
         </div>
 
-        {/* Récapitulatif de la commande */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Récapitulatif de votre commande</h2>
-          <div className="space-y-4">
+        {/* Récapitulatif */}
+        <div>
+          <h2 className="text-xl font-semibold mb-6">Récapitulatif</h2>
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center space-x-4 py-2 border-b">
-                <div className="relative w-20 h-20">
+              <div key={item.id} className="flex items-center gap-4 mb-4 last:mb-0">
+                <div className="relative w-16 h-16">
                   <Image
-                    src={item.image_url}
+                    src={item.image}
                     alt={item.name}
                     fill
                     className="object-cover rounded"
                   />
+                  <span className="absolute -top-2 -right-2 bg-primary text-white w-5 h-5 rounded-full flex items-center justify-center text-xs">
+                    {item.quantity}
+                  </span>
                 </div>
                 <div className="flex-1">
                   <h3 className="font-medium">{item.name}</h3>
-                  <p className="text-sm text-gray-600">Quantité: {item.quantity}</p>
-                  <p className="text-sm font-medium">{(item.price * item.quantity).toFixed(2)} €</p>
+                  <p className="text-primary">{item.price.toFixed(2)}€</p>
                 </div>
               </div>
             ))}
-            <div className="pt-4 border-t">
-              <div className="flex justify-between font-semibold">
+
+            <div className="border-t mt-4 pt-4 space-y-2">
+              <div className="flex justify-between">
+                <span>Sous-total</span>
+                <span>{total.toFixed(2)}€</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Livraison</span>
+                <span>{fraisLivraison.toFixed(2)}€</span>
+              </div>
+              {total < 25 && (
+                <div className="bg-pink-50 p-3 rounded text-sm text-pink-600 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clipRule="evenodd" />
+                    <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z" />
+                  </svg>
+                  Plus que {(25 - total).toFixed(2)}€ pour la livraison gratuite !
+                </div>
+              )}
+            </div>
+
+            <div className="border-t mt-4 pt-4">
+              <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
-                <span>{total.toFixed(2)} €</span>
+                <span>{(total + fraisLivraison).toFixed(2)}€</span>
               </div>
             </div>
           </div>
