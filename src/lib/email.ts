@@ -1,6 +1,7 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 interface OrderConfirmationEmailProps {
   orderNumber: string;
@@ -28,6 +29,16 @@ export async function sendOrderConfirmationEmail({
   shippingAddress
 }: OrderConfirmationEmailProps) {
   try {
+    // Si Resend n'est pas configuré, on log juste l'email
+    if (!resend) {
+      console.log('Email qui aurait été envoyé:', {
+        to: customerEmail,
+        subject: `Confirmation de votre commande #${orderNumber}`,
+        orderDetails: { items, total, shippingAddress }
+      });
+      return { success: true, data: null };
+    }
+
     const response = await resend.emails.send({
       from: 'La Chabroderie <commandes@lachabroderie.fr>',
       to: customerEmail,

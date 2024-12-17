@@ -1,20 +1,26 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { sendOrderConfirmationEmail } from '@/lib/email';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { orderNumber, customerName, customerEmail, items, total, shippingAddress } = body;
+    const { 
+      orderNumber,
+      customerName,
+      customerEmail,
+      items,
+      total,
+      shippingAddress
+    } = body;
 
     // Vérification des données requises
     if (!orderNumber || !customerName || !customerEmail || !items || !total || !shippingAddress) {
       return NextResponse.json(
-        { error: 'Données manquantes' },
+        { error: 'Données manquantes pour l\'envoi de l\'email' },
         { status: 400 }
       );
     }
 
-    // Envoi de l'email
     const result = await sendOrderConfirmationEmail({
       orderNumber,
       customerName,
@@ -25,12 +31,16 @@ export async function POST(request: Request) {
     });
 
     if (!result.success) {
-      throw new Error('Erreur lors de l\'envoi de l\'email');
+      console.error('Erreur lors de l\'envoi de l\'email:', result.error);
+      return NextResponse.json(
+        { error: 'Erreur lors de l\'envoi de l\'email' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Erreur:', error);
+    console.error('Erreur lors de l\'envoi de l\'email:', error);
     return NextResponse.json(
       { error: 'Erreur lors de l\'envoi de l\'email' },
       { status: 500 }
