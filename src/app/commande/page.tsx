@@ -60,7 +60,7 @@ export default function CommandePage() {
       }
 
       // Rediriger vers l'URL de paiement
-      window.location.href = response.payment_url;
+      window.location.href = response.return_url || response.payment_url;
     } catch (error) {
       console.error('Erreur lors de la création du paiement:', error);
       alert('Une erreur est survenue lors de la création du paiement. Veuillez réessayer.');

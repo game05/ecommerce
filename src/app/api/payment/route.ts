@@ -8,12 +8,15 @@ export async function POST(request: Request) {
     const orderData = await request.json();
     console.log('Création du paiement avec les données:', orderData);
 
+    // Créer l'URL de retour avec l'ID de paiement
+    const baseReturnUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation`;
+
     const paymentData = {
       amount: Math.round(orderData.amount * 100),
       currency: 'EUR',
       notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/payplug`,
       hosted_payment: {
-        return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/confirmation`,
+        return_url: baseReturnUrl,
         cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/commande/annulation`
       },
       customer: {
@@ -54,15 +57,17 @@ export async function POST(request: Request) {
     const payment = await response.json();
     console.log('Paiement créé avec succès:', payment);
 
-    // Ajouter l'ID de paiement à l'URL de retour
-    const return_url = new URL(paymentData.hosted_payment.return_url);
-    return_url.searchParams.set('payment_id', payment.id);
+    // Créer l'URL de retour avec l'ID de paiement
+    const return_url = `${baseReturnUrl}?payment_id=${payment.id}`;
 
-    // On renvoie l'URL de paiement modifiée et l'ID
+    // Modifier l'URL de paiement pour inclure l'ID de paiement dans le retour
+    const payment_url = new URL(payment.hosted_payment.payment_url);
+    payment_url.searchParams.set('return_url', return_url);
+
     return NextResponse.json({
-      payment_url: payment.hosted_payment.payment_url,
+      payment_url: payment_url.toString(),
       payment_id: payment.id,
-      return_url: return_url.toString()
+      return_url: return_url
     });
   } catch (error) {
     console.error('Erreur serveur PayPlug:', error);

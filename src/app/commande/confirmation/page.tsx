@@ -9,28 +9,52 @@ export default function ConfirmationPage() {
   const searchParams = useSearchParams();
   const { clearCart } = useCart();
   const [paymentStatus, setPaymentStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
     const verifyPayment = async () => {
       try {
         const paymentId = searchParams.get('payment_id');
+        console.log('ID de paiement reçu:', paymentId);
         
         if (!paymentId) {
+          console.error('Aucun ID de paiement trouvé dans l\'URL');
+          setErrorMessage('ID de paiement manquant');
           setPaymentStatus('error');
           return;
         }
 
+        console.log('Envoi de la requête de vérification...');
         const response = await fetch(`/api/payment/verify?payment_id=${paymentId}`);
         const data = await response.json();
+        console.log('Réponse de vérification:', data);
 
-        if (response.ok && data.status === 'paid') {
+        if (!response.ok) {
+          console.error('Erreur HTTP:', response.status, data);
+          setErrorMessage('Erreur lors de la vérification du paiement');
+          setPaymentStatus('error');
+          return;
+        }
+
+        if (data.error) {
+          console.error('Erreur de l\'API:', data.error);
+          setErrorMessage(data.error);
+          setPaymentStatus('error');
+          return;
+        }
+
+        if (data.status === 'paid') {
+          console.log('Paiement confirmé, vidage du panier');
           clearCart();
           setPaymentStatus('success');
         } else {
+          console.error('Statut de paiement invalide:', data.status);
+          setErrorMessage('Le paiement n\'a pas été validé');
           setPaymentStatus('error');
         }
       } catch (error) {
-        console.error('Erreur:', error);
+        console.error('Erreur lors de la vérification:', error);
+        setErrorMessage('Une erreur inattendue est survenue');
         setPaymentStatus('error');
       }
     };
@@ -72,7 +96,7 @@ export default function ConfirmationPage() {
                 Une erreur est survenue
               </h1>
               <p className="mt-2 text-gray-600">
-                Le paiement n'a pas pu être vérifié. Veuillez réessayer ou nous contacter si le problème persiste.
+                {errorMessage || "Le paiement n'a pas pu être vérifié. Veuillez réessayer ou nous contacter si le problème persiste."}
               </p>
               <div className="mt-8">
                 <Link
@@ -104,12 +128,15 @@ export default function ConfirmationPage() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                d="M5 13l4 4L19 7"
               />
             </svg>
             <h1 className="mt-4 text-2xl font-bold text-gray-900">
-              Merci pour votre achat !
+              Merci pour votre commande !
             </h1>
+            <p className="mt-2 text-gray-600">
+              Votre paiement a été confirmé. Nous vous enverrons un email avec les détails de votre commande.
+            </p>
             <div className="mt-8">
               <Link
                 href="/"
