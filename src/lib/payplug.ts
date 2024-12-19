@@ -17,12 +17,14 @@ interface PaymentData {
 interface PaymentResponse {
   payment_url: string;
   payment_id: string;
+  confirmation_token: string;
 }
 
 interface ApiResponse {
   data?: {
     payment_url: string;
     payment_id: string;
+    confirmation_token: string;
   };
   error?: string;
 }
@@ -58,13 +60,17 @@ export async function createPayment(orderData: PaymentData): Promise<PaymentResp
     const result: ApiResponse = await response.json();
     console.log('Réponse de paiement reçue:', result);
 
-    if (!result.data?.payment_url || !result.data?.payment_id) {
+    if (!result.data?.payment_url || !result.data?.payment_id || !result.data?.confirmation_token) {
       throw new Error('URL de paiement manquante dans la réponse');
     }
 
+    // Stocker le token de confirmation dans le localStorage
+    localStorage.setItem('confirmation_token', result.data.confirmation_token);
+
     return {
       payment_url: result.data.payment_url,
-      payment_id: result.data.payment_id
+      payment_id: result.data.payment_id,
+      confirmation_token: result.data.confirmation_token
     };
   } catch (error: any) {
     console.error('Erreur lors de la création du paiement:', error);

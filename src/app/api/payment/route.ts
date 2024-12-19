@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
@@ -25,12 +26,15 @@ export async function POST(request: Request) {
       throw new Error('Clé API PayPlug non configurée');
     }
 
+    // Générer un token unique pour cette transaction
+    const confirmationToken = crypto.randomBytes(32).toString('hex');
+
     const paymentData = {
       amount: Math.round(amount * 100),
       currency: 'EUR',
       notification_url: `${baseUrl}/api/payment/webhook`,
       hosted_payment: {
-        return_url: `${baseUrl}/commande/confirmation?success=true`,
+        return_url: `${baseUrl}/commande/confirmation?success=true&token=${confirmationToken}`,
         cancel_url: `${baseUrl}/commande?canceled=true`,
       },
       customer: {
@@ -39,8 +43,8 @@ export async function POST(request: Request) {
         last_name: customer.lastName,
       },
       metadata: {
-        customer_id: customer.email,
-      },
+        confirmation_token: confirmationToken,
+      }
     };
 
     console.log('Données envoyées à PayPlug:', paymentData);
@@ -75,7 +79,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       data: {
         payment_url: payment.hosted_payment.payment_url,
-        payment_id: payment.id
+        payment_id: payment.id,
+        confirmation_token: confirmationToken
       }
     });
 
