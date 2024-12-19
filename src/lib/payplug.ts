@@ -19,6 +19,14 @@ interface PaymentResponse {
   payment_id: string;
 }
 
+interface ApiResponse {
+  data?: {
+    payment_url: string;
+    payment_id: string;
+  };
+  error?: string;
+}
+
 export async function createPayment(orderData: PaymentData): Promise<PaymentResponse> {
   try {
     console.log('Envoi de la demande de paiement:', orderData);
@@ -47,16 +55,16 @@ export async function createPayment(orderData: PaymentData): Promise<PaymentResp
       throw new Error(error.error || 'Erreur lors de la création du paiement');
     }
 
-    const payment = await response.json();
-    console.log('Réponse de paiement reçue:', payment);
+    const result: ApiResponse = await response.json();
+    console.log('Réponse de paiement reçue:', result);
 
-    if (!payment.payment_url || !payment.payment_id) {
+    if (!result.data?.payment_url || !result.data?.payment_id) {
       throw new Error('URL de paiement manquante dans la réponse');
     }
 
     return {
-      payment_url: payment.payment_url,
-      payment_id: payment.payment_id
+      payment_url: result.data.payment_url,
+      payment_id: result.data.payment_id
     };
   } catch (error: any) {
     console.error('Erreur lors de la création du paiement:', error);

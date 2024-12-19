@@ -121,7 +121,9 @@ export async function GET(request: Request) {
       );
     }
 
-    return NextResponse.json(payment);
+    return NextResponse.json({
+      data: payment
+    });
   } catch (error: any) {
     console.error('Erreur lors de la récupération du paiement:', error);
     return NextResponse.json(
