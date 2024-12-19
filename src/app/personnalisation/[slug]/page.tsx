@@ -70,78 +70,100 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Personnalisation de {product.name}
-          </h1>
+      {/* Header élégant */}
+      <div className="bg-gradient-to-r from-pink-50 to-purple-50 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center space-y-2">
+            <p className="text-pink-600 font-medium">Personnalisation</p>
+            <h1 className="text-4xl font-bold text-gray-900">
+              {product.name}
+            </h1>
+            <p className="text-gray-600 mt-2 text-lg">
+              Créez un cadeau unique et personnalisé
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Contenu principal */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             {/* Colonne de gauche : Image du produit */}
-            <div className="p-6 border-b lg:border-b-0 lg:border-r border-gray-200">
-              <div className="relative aspect-square rounded-lg overflow-hidden">
-                <Image
-                  src={product.image_url}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-              </div>
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold text-gray-900">Aperçu en temps réel</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Visualisez vos modifications en direct sur le produit
-                </p>
+            <div className="relative">
+              <div className="p-8">
+                <div className="relative aspect-square rounded-xl overflow-hidden shadow-lg">
+                  <Image
+                    src={product.image_url}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
+                </div>
+                <div className="mt-6 text-center">
+                  <h3 className="text-lg font-medium text-gray-900">Aperçu en temps réel</h3>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Visualisez vos modifications directement sur le produit
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Colonne de droite : Formulaire de personnalisation */}
-            <div className="p-8">
-              <div className="max-w-md mx-auto space-y-8">
-                {/* Section Prénom */}
-                <div className="space-y-4">
-                  <label htmlFor="prenom" className="block text-lg font-semibold text-gray-900">
-                    Prénom de l'enfant
-                  </label>
-                  <input
-                    type="text"
-                    id="prenom"
-                    name="prenom"
-                    value={formData.prenom}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Ex: Louise"
-                  />
-                </div>
+            <div className="relative">
+              <div className="p-8 lg:p-12 bg-gradient-to-br from-white to-pink-50 h-full">
+                <div className="max-w-md mx-auto space-y-10">
+                  {/* Section Prénom */}
+                  <div className="space-y-4">
+                    <label htmlFor="prenom" className="block text-xl font-medium text-gray-900">
+                      Prénom de l'enfant
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="prenom"
+                        name="prenom"
+                        value={formData.prenom}
+                        onChange={handleInputChange}
+                        className="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-pink-400 focus:ring focus:ring-pink-200 focus:ring-opacity-50 transition-all duration-200 text-lg"
+                        placeholder="Ex: Louise"
+                      />
+                      <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                        <span className="text-pink-400">
+                          ✨
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
-                {/* Section Date de naissance */}
-                <div className="space-y-4">
-                  <label htmlFor="dateNaissance" className="block text-lg font-semibold text-gray-900">
-                    Date de naissance
-                  </label>
-                  <input
-                    type="date"
-                    id="dateNaissance"
-                    name="dateNaissance"
-                    value={formData.dateNaissance}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
-                  />
-                </div>
+                  {/* Section Date de naissance */}
+                  <div className="space-y-4">
+                    <label htmlFor="dateNaissance" className="block text-xl font-medium text-gray-900">
+                      Date de naissance
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        id="dateNaissance"
+                        name="dateNaissance"
+                        value={formData.dateNaissance}
+                        onChange={handleInputChange}
+                        className="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-pink-400 focus:ring focus:ring-pink-200 focus:ring-opacity-50 transition-all duration-200 text-lg"
+                      />
+                      <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                        <span className="text-pink-400">
+                          🎈
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
-                {/* Bouton de validation */}
-                <button
-                  className="w-full bg-pink-500 text-white py-4 rounded-lg hover:bg-pink-600 transition-colors duration-200 font-semibold mt-8"
-                >
-                  Valider la personnalisation
-                </button>
+                  {/* Bouton de validation */}
+                  <button className="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-5 rounded-xl hover:from-pink-600 hover:to-pink-700 transform hover:scale-[1.02] transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl">
+                    Valider ma personnalisation
+                  </button>
+                </div>
               </div>
             </div>
           </div>
