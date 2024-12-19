@@ -70,22 +70,55 @@ export default function Home() {
 
       {/* Featured Categories */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-center mb-12">Nos Catégories</h2>
+        <h2 className="text-3xl font-bold text-center mb-4">Nos Catégories</h2>
+        <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+          Découvrez notre sélection de produits soigneusement choisis pour le confort et le bien-être de votre bébé
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { title: 'Vêtements', image: '/categories/vetements.jpg' },
-            { title: 'Accessoires', image: '/categories/accessoires.jpg' },
-            { title: 'Décoration', image: '/categories/decoration.jpg' },
+            {
+              title: 'Vêtements',
+              description: 'Des vêtements doux et confortables pour bébé',
+              image: '/categories/vetements.jpg',
+              link: '/categories/vetements'
+            },
+            {
+              title: 'Accessoires',
+              description: 'Tout le nécessaire pour le quotidien de bébé',
+              image: '/categories/accessoires.jpg',
+              link: '/categories/accessoires'
+            },
+            {
+              title: 'Décoration',
+              description: 'Pour une chambre de bébé unique et chaleureuse',
+              image: '/categories/decoration.jpg',
+              link: '/categories/decoration'
+            },
           ].map((category) => (
-            <div
+            <Link
+              href={category.link}
               key={category.title}
-              className="relative h-64 rounded-lg overflow-hidden group"
+              className="group relative block"
             >
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <h3 className="text-2xl font-bold text-white">{category.title}</h3>
+              <div className="relative h-80 rounded-lg overflow-hidden">
+                <Image
+                  src={category.image}
+                  alt={category.title}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/20 group-hover:from-black/80 group-hover:to-black/30 transition-all duration-300" />
+                <div className="absolute inset-0 flex flex-col items-center justify-end p-6 text-center">
+                  <h3 className="text-2xl font-bold text-white mb-2 transform transition-transform duration-300 group-hover:-translate-y-2">
+                    {category.title}
+                  </h3>
+                  <p className="text-white/90 transform transition-all duration-300 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
+                    {category.description}
+                  </p>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
