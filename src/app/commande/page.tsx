@@ -3,6 +3,7 @@
 import { useCart } from '@/hooks/useCart';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { createPayment } from '@/lib/payplug';
 
 interface FormData {
@@ -17,6 +18,7 @@ interface FormData {
 export default function CommandePage() {
   const { items, clearCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState<FormData>({
     prenom: '',
     nom: '',
@@ -28,6 +30,12 @@ export default function CommandePage() {
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const fraisLivraison = total >= 25 ? 0 : 4.99;
+
+  // Vérifier si le paiement a été annulé
+  const canceled = searchParams.get('canceled');
+  if (canceled) {
+    alert('Le paiement a été annulé. Vous pouvez réessayer quand vous voulez.');
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

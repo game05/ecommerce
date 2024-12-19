@@ -28,23 +28,35 @@ export async function createPayment(orderData: PaymentData): Promise<PaymentResp
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(orderData)
+      body: JSON.stringify({
+        amount: orderData.amount,
+        customer: {
+          firstName: orderData.first_name,
+          lastName: orderData.last_name,
+          email: orderData.email,
+          address: orderData.shipping_address.street_address,
+          postcode: orderData.shipping_address.postcode,
+          city: orderData.shipping_address.city
+        }
+      })
     });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('Erreur de réponse:', error);
+      throw new Error(error.error || 'Erreur lors de la création du paiement');
+    }
 
     const payment = await response.json();
     console.log('Réponse de paiement reçue:', payment);
 
-    if (!response.ok) {
-      throw new Error(payment.error || 'Erreur lors de la création du paiement');
-    }
-
-    if (!payment.payment_url) {
+    if (!payment.hosted_payment?.payment_url || !payment.id) {
       throw new Error('URL de paiement manquante dans la réponse');
     }
 
     return {
-      payment_url: payment.payment_url,
-      payment_id: payment.payment_id
+      payment_url: payment.hosted_payment.payment_url,
+      payment_id: payment.id
     };
   } catch (error) {
     console.error('Erreur lors de la création du paiement:', error);
