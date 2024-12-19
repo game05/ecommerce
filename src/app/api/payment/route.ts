@@ -72,8 +72,10 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      payment_url: payment.hosted_payment.payment_url,
-      payment_id: payment.id
+      data: {
+        payment_url: payment.hosted_payment.payment_url,
+        payment_id: payment.id
+      }
     });
 
   } catch (error: any) {

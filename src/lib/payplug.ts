@@ -50,15 +50,15 @@ export async function createPayment(orderData: PaymentData): Promise<PaymentResp
     const payment = await response.json();
     console.log('Réponse de paiement reçue:', payment);
 
-    if (!payment.hosted_payment?.payment_url || !payment.id) {
+    if (!payment.payment_url || !payment.payment_id) {
       throw new Error('URL de paiement manquante dans la réponse');
     }
 
     return {
-      payment_url: payment.hosted_payment.payment_url,
-      payment_id: payment.id
+      payment_url: payment.payment_url,
+      payment_id: payment.payment_id
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erreur lors de la création du paiement:', error);
     throw error;
   }
