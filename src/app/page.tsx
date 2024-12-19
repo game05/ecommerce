@@ -85,21 +85,21 @@ export default function Home() {
               {
                 title: 'Vêtements',
                 description: 'Des créations uniques et douces pour le confort de bébé',
-                image: '/categories/vetements.jpg',
+                image: 'https://images.unsplash.com/photo-1522771930-78848d9293e8?q=80&w=1200&auto=format&fit=crop',
                 link: '/categories/vetements',
                 accent: 'from-pink-500 to-rose-600'
               },
               {
                 title: 'Accessoires',
                 description: 'Les petits détails qui font toute la différence',
-                image: '/categories/accessoires.jpg',
+                image: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=1200&auto=format&fit=crop',
                 link: '/categories/accessoires',
                 accent: 'from-purple-500 to-indigo-600'
               },
               {
                 title: 'Décoration',
                 description: 'Pour créer un cocon douillet et magique',
-                image: '/categories/decoration.jpg',
+                image: 'https://images.unsplash.com/photo-1586105449897-20b5efeb3233?q=80&w=1200&auto=format&fit=crop',
                 link: '/categories/decoration',
                 accent: 'from-blue-500 to-cyan-600'
               },
