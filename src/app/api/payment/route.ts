@@ -3,9 +3,10 @@ import { headers } from 'next/headers';
 
 export async function POST(request: Request) {
   try {
-    const headersList = headers();
-    const origin = headersList.get('origin') || '';
-    const baseUrl = origin || process.env.NEXT_PUBLIC_BASE_URL || '';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || '';
+    if (!baseUrl) {
+      throw new Error('URL du site non configurée');
+    }
     
     const body = await request.json();
     const { amount, customer } = body;
