@@ -75,6 +75,10 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
       alert('Veuillez entrer un prénom');
       return;
     }
+    if (currentStep === 2 && !formData.motifSelectionne) {
+      alert('Veuillez sélectionner un motif');
+      return;
+    }
     setCurrentStep(prev => prev + 1);
   };
 
@@ -95,29 +99,6 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
   return (
     <main className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Indicateur d'étapes */}
-        <div className="mb-8">
-          <div className="flex justify-center items-center space-x-4">
-            <div className={`flex items-center ${currentStep >= 1 ? 'text-pink-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                currentStep >= 1 ? 'border-pink-600 bg-pink-50' : 'border-gray-300'
-              }`}>
-                1
-              </div>
-              <span className="ml-2 text-sm font-medium">Prénom</span>
-            </div>
-            <div className="w-16 h-0.5 bg-gray-200"></div>
-            <div className={`flex items-center ${currentStep >= 2 ? 'text-pink-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                currentStep >= 2 ? 'border-pink-600 bg-pink-50' : 'border-gray-300'
-              }`}>
-                2
-              </div>
-              <span className="ml-2 text-sm font-medium">Motif</span>
-            </div>
-          </div>
-        </div>
-
         <div className="lg:grid lg:grid-cols-2 lg:gap-8">
           {/* Colonne de gauche - Image du produit */}
           <div className="mb-8 lg:mb-0">
@@ -134,8 +115,8 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                   <Image
                     src={formData.motifSelectionne}
                     alt="Motif sélectionné"
-                    width={150}
-                    height={150}
+                    width={100}
+                    height={100}
                     className="object-contain"
                   />
                 </div>
@@ -149,50 +130,132 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
               Personnalisation de {product.name}
             </h1>
 
+            {/* Indicateur d'étapes en dessous du titre */}
+            <div className="mb-8">
+              <div className="flex items-center gap-6">
+                <div className={`flex items-center ${currentStep >= 1 ? 'text-pink-600' : 'text-gray-400'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                    currentStep >= 1 ? 'border-pink-600 bg-pink-50' : 'border-gray-300'
+                  }`}>
+                    1
+                  </div>
+                  <span className="ml-3 text-sm font-medium">Prénom</span>
+                </div>
+                <div className="w-16">
+                  <div className={`h-0.5 ${currentStep >= 2 ? 'bg-pink-600' : 'bg-gray-200'}`}></div>
+                </div>
+                <div className={`flex items-center ${currentStep >= 2 ? 'text-pink-600' : 'text-gray-400'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                    currentStep >= 2 ? 'border-pink-600 bg-pink-50' : 'border-gray-300'
+                  }`}>
+                    2
+                  </div>
+                  <span className="ml-3 text-sm font-medium">Motif</span>
+                </div>
+                <div className="w-16">
+                  <div className={`h-0.5 ${currentStep >= 3 ? 'bg-pink-600' : 'bg-gray-200'}`}></div>
+                </div>
+                <div className={`flex items-center ${currentStep >= 3 ? 'text-pink-600' : 'text-gray-400'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                    currentStep >= 3 ? 'border-pink-600 bg-pink-50' : 'border-gray-300'
+                  }`}>
+                    3
+                  </div>
+                  <span className="ml-3 text-sm font-medium">Récapitulatif</span>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-6">
               {currentStep === 1 ? (
-                /* Étape 1 : Prénom */
-                <div>
-                  <label htmlFor="prenom" className="block text-sm font-medium text-gray-700">
-                    Prénom de l'enfant
+                /* Étape 1 : Prénom avec design amélioré */
+                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                  <label htmlFor="prenom" className="block text-base font-medium text-gray-700 mb-3">
+                    Quel prénom souhaitez-vous broder ?
                   </label>
-                  <div className="mt-1">
+                  <div className="relative">
                     <input
                       type="text"
                       id="prenom"
                       name="prenom"
                       value={formData.prenom}
                       onChange={handleInputChange}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+                      className="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-lg transition-all duration-200"
                       placeholder="Ex: Louise"
                     />
+                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                      <span className="text-pink-400">✨</span>
+                    </div>
                   </div>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Ce prénom sera brodé avec soin sur votre article
+                  </p>
                 </div>
-              ) : (
+              ) : currentStep === 2 ? (
                 /* Étape 2 : Motifs */
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
                     Choisissez un motif
                   </label>
-                  <div className="mt-3 grid grid-cols-2 gap-4">
+                  <div className="mt-2 grid grid-cols-3 gap-2">
                     {motifs.map((motif, index) => (
                       <button
                         key={index}
                         onClick={() => handleMotifSelect(motif)}
-                        className={`relative aspect-square rounded-lg border overflow-hidden ${
+                        className={`relative aspect-square rounded-lg border overflow-hidden p-1.5 ${
                           formData.motifSelectionne === motif
                             ? 'border-pink-500 ring-2 ring-pink-500'
                             : 'border-gray-200 hover:border-pink-300'
                         }`}
                       >
-                        <Image
-                          src={motif}
-                          alt={`Motif ${index + 1}`}
-                          fill
-                          className="object-contain p-2"
-                        />
+                        <div className="relative w-20 h-20 mx-auto">
+                          <Image
+                            src={motif}
+                            alt={`Motif ${index + 1}`}
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
                       </button>
                     ))}
+                  </div>
+                </div>
+              ) : (
+                /* Étape 3 : Récapitulatif */
+                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Récapitulatif de votre personnalisation</h2>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Prénom</p>
+                        <p className="text-base font-medium text-gray-900">{formData.prenom}</p>
+                      </div>
+                      <button 
+                        onClick={() => setCurrentStep(1)}
+                        className="text-sm text-pink-600 hover:text-pink-800"
+                      >
+                        Modifier
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Motif</p>
+                        <div className="w-16 h-16 relative mt-1">
+                          <Image
+                            src={formData.motifSelectionne}
+                            alt="Motif sélectionné"
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => setCurrentStep(2)}
+                        className="text-sm text-pink-600 hover:text-pink-800"
+                      >
+                        Modifier
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -207,19 +270,19 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                     Retour
                   </button>
                 )}
-                {currentStep === 1 ? (
+                {currentStep < 3 ? (
                   <button
                     onClick={nextStep}
-                    className="ml-auto px-4 py-2 bg-pink-600 text-white rounded-md text-sm font-medium hover:bg-pink-700"
+                    className="ml-auto px-6 py-3 bg-pink-600 text-white rounded-md text-sm font-medium hover:bg-pink-700 transition-colors duration-200"
                   >
                     Suivant
                   </button>
                 ) : (
                   <button
                     type="submit"
-                    className="ml-auto px-4 py-2 bg-pink-600 text-white rounded-md text-sm font-medium hover:bg-pink-700"
+                    className="ml-auto px-6 py-3 bg-pink-600 text-white rounded-md text-sm font-medium hover:bg-pink-700 transition-colors duration-200"
                   >
-                    Valider la personnalisation
+                    Ajouter au panier
                   </button>
                 )}
               </div>
