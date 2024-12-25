@@ -14,10 +14,10 @@ type Product = {
 
 // Liste des motifs disponibles
 const motifs = [
-  '/motif/Voiture pompier_10x7cm.png',
-  '/motif/tracteur vert 1.png',
-  '/motif/vache serviette fuchia.png',
-  '/motif/violon nanou.png'
+  '/motif/motif1.png',
+  '/motif/motif2.png',
+  '/motif/motif3.png',
+  '/motif/motif4.png'
 ];
 
 export default function PersonnalisationPage({ params }: { params: { slug: string } }) {
@@ -70,7 +70,7 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pink-500"></div>
       </div>
     );
   }
@@ -85,29 +85,26 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header élégant */}
+      {/* Header plus compact */}
       <div className="bg-gradient-to-r from-pink-50 to-purple-50 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center space-y-2">
-            <p className="text-pink-600 font-medium">Personnalisation</p>
-            <h1 className="text-4xl font-bold text-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="text-center space-y-1">
+            <p className="text-pink-600 text-sm font-medium">Personnalisation</p>
+            <h1 className="text-2xl font-bold text-gray-900">
               {product.name}
             </h1>
-            <p className="text-gray-600 mt-2 text-lg">
-              Créez un cadeau unique et personnalisé
-            </p>
           </div>
         </div>
       </div>
 
       {/* Contenu principal */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             {/* Colonne de gauche : Image du produit */}
             <div className="relative">
-              <div className="p-8">
-                <div className="relative aspect-square rounded-xl overflow-hidden shadow-lg">
+              <div className="p-6">
+                <div className="relative aspect-square rounded-lg overflow-hidden shadow-md">
                   <Image
                     src={product.image_url}
                     alt={product.name}
@@ -120,17 +117,16 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                       <Image
                         src={formData.motifSelectionne}
                         alt="Motif sélectionné"
-                        width={200}
-                        height={200}
+                        width={150}
+                        height={150}
                         className="object-contain"
                       />
                     </div>
                   )}
                 </div>
-                <div className="mt-6 text-center">
-                  <h3 className="text-lg font-medium text-gray-900">Aperçu en temps réel</h3>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Visualisez vos modifications directement sur le produit
+                <div className="mt-4 text-center">
+                  <p className="text-sm text-gray-500">
+                    Aperçu en temps réel de votre personnalisation
                   </p>
                 </div>
               </div>
@@ -138,11 +134,11 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
 
             {/* Colonne de droite : Formulaire de personnalisation */}
             <div className="relative">
-              <div className="p-8 lg:p-12 bg-gradient-to-br from-white to-pink-50 h-full">
-                <div className="max-w-md mx-auto space-y-10">
+              <div className="p-6 bg-gradient-to-br from-white to-pink-50 h-full">
+                <div className="max-w-md mx-auto space-y-6">
                   {/* Section Prénom */}
-                  <div className="space-y-4">
-                    <label htmlFor="prenom" className="block text-xl font-medium text-gray-900">
+                  <div className="space-y-2">
+                    <label htmlFor="prenom" className="block text-sm font-medium text-gray-900">
                       Prénom de l'enfant
                     </label>
                     <div className="relative">
@@ -152,28 +148,28 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                         name="prenom"
                         value={formData.prenom}
                         onChange={handleInputChange}
-                        className="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-pink-400 focus:ring focus:ring-pink-200 focus:ring-opacity-50 transition-all duration-200 text-lg"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-pink-400 focus:ring focus:ring-pink-200 focus:ring-opacity-50 transition-all duration-200"
                         placeholder="Ex: Louise"
                       />
-                      <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                        <span className="text-pink-400">✨</span>
+                      <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                        <span className="text-pink-400 text-sm">✨</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Section Motifs */}
-                  <div className="space-y-4">
-                    <label className="block text-xl font-medium text-gray-900">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-900">
                       Choisissez un motif
                     </label>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
                       {motifs.map((motif, index) => (
                         <button
                           key={index}
                           onClick={() => handleMotifSelect(motif)}
-                          className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                          className={`relative aspect-square rounded-lg overflow-hidden border transition-all duration-200 ${
                             formData.motifSelectionne === motif
-                              ? 'border-pink-500 ring-2 ring-pink-200'
+                              ? 'border-pink-500 ring-1 ring-pink-200'
                               : 'border-gray-200 hover:border-pink-300'
                           }`}
                         >
@@ -189,7 +185,7 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                   </div>
 
                   {/* Bouton de validation */}
-                  <button className="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-5 rounded-xl hover:from-pink-600 hover:to-pink-700 transform hover:scale-[1.02] transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl">
+                  <button className="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-2 rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md">
                     Valider ma personnalisation
                   </button>
                 </div>
