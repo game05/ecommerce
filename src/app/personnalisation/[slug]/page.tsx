@@ -12,12 +12,20 @@ type Product = {
   image_url: string;
 };
 
+// Liste des motifs disponibles
+const motifs = [
+  '/motif/Voiture pompier_10x7cm.png',
+  '/motif/tracteur vert 1.png',
+  '/motif/vache serviette fuchia.png',
+  '/motif/violon nanou.png'
+];
+
 export default function PersonnalisationPage({ params }: { params: { slug: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     prenom: '',
-    dateNaissance: '',
+    motifSelectionne: ''
   });
 
   useEffect(() => {
@@ -49,6 +57,13 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleMotifSelect = (motif: string) => {
+    setFormData(prev => ({
+      ...prev,
+      motifSelectionne: motif
     }));
   };
 
@@ -100,6 +115,17 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                     className="object-cover"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
+                  {formData.motifSelectionne && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Image
+                        src={formData.motifSelectionne}
+                        alt="Motif sélectionné"
+                        width={200}
+                        height={200}
+                        className="object-contain"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="mt-6 text-center">
                   <h3 className="text-lg font-medium text-gray-900">Aperçu en temps réel</h3>
@@ -130,32 +156,35 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                         placeholder="Ex: Louise"
                       />
                       <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                        <span className="text-pink-400">
-                          ✨
-                        </span>
+                        <span className="text-pink-400">✨</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Section Date de naissance */}
+                  {/* Section Motifs */}
                   <div className="space-y-4">
-                    <label htmlFor="dateNaissance" className="block text-xl font-medium text-gray-900">
-                      Date de naissance
+                    <label className="block text-xl font-medium text-gray-900">
+                      Choisissez un motif
                     </label>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        id="dateNaissance"
-                        name="dateNaissance"
-                        value={formData.dateNaissance}
-                        onChange={handleInputChange}
-                        className="w-full px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-pink-400 focus:ring focus:ring-pink-200 focus:ring-opacity-50 transition-all duration-200 text-lg"
-                      />
-                      <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                        <span className="text-pink-400">
-                          🎈
-                        </span>
-                      </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {motifs.map((motif, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleMotifSelect(motif)}
+                          className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                            formData.motifSelectionne === motif
+                              ? 'border-pink-500 ring-2 ring-pink-200'
+                              : 'border-gray-200 hover:border-pink-300'
+                          }`}
+                        >
+                          <Image
+                            src={motif}
+                            alt={`Motif ${index + 1}`}
+                            fill
+                            className="object-contain p-2"
+                          />
+                        </button>
+                      ))}
                     </div>
                   </div>
 
