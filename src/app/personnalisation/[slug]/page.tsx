@@ -24,6 +24,7 @@ const motifs = [
 export default function PersonnalisationPage({ params }: { params: { slug: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     prenom: '',
     motifSelectionne: ''
@@ -69,6 +70,18 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
     }));
   };
 
+  const nextStep = () => {
+    if (currentStep === 1 && !formData.prenom) {
+      alert('Veuillez entrer un prénom');
+      return;
+    }
+    setCurrentStep(prev => prev + 1);
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => prev - 1);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -82,6 +95,29 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
   return (
     <main className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Indicateur d'étapes */}
+        <div className="mb-8">
+          <div className="flex justify-center items-center space-x-4">
+            <div className={`flex items-center ${currentStep >= 1 ? 'text-pink-600' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                currentStep >= 1 ? 'border-pink-600 bg-pink-50' : 'border-gray-300'
+              }`}>
+                1
+              </div>
+              <span className="ml-2 text-sm font-medium">Prénom</span>
+            </div>
+            <div className="w-16 h-0.5 bg-gray-200"></div>
+            <div className={`flex items-center ${currentStep >= 2 ? 'text-pink-600' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                currentStep >= 2 ? 'border-pink-600 bg-pink-50' : 'border-gray-300'
+              }`}>
+                2
+              </div>
+              <span className="ml-2 text-sm font-medium">Motif</span>
+            </div>
+          </div>
+        </div>
+
         <div className="lg:grid lg:grid-cols-2 lg:gap-8">
           {/* Colonne de gauche - Image du produit */}
           <div className="mb-8 lg:mb-0">
@@ -114,58 +150,79 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
             </h1>
 
             <div className="space-y-6">
-              {/* Champ prénom */}
-              <div>
-                <label htmlFor="prenom" className="block text-sm font-medium text-gray-700">
-                  Prénom de l'enfant
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    id="prenom"
-                    name="prenom"
-                    value={formData.prenom}
-                    onChange={handleInputChange}
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
-                    placeholder="Ex: Louise"
-                  />
+              {currentStep === 1 ? (
+                /* Étape 1 : Prénom */
+                <div>
+                  <label htmlFor="prenom" className="block text-sm font-medium text-gray-700">
+                    Prénom de l'enfant
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      type="text"
+                      id="prenom"
+                      name="prenom"
+                      value={formData.prenom}
+                      onChange={handleInputChange}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 sm:text-sm"
+                      placeholder="Ex: Louise"
+                    />
+                  </div>
                 </div>
-              </div>
-
-              {/* Sélection du motif */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Choisissez un motif
-                </label>
-                <div className="mt-3 grid grid-cols-2 gap-4">
-                  {motifs.map((motif, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleMotifSelect(motif)}
-                      className={`relative aspect-square rounded-lg border overflow-hidden ${
-                        formData.motifSelectionne === motif
-                          ? 'border-pink-500 ring-2 ring-pink-500'
-                          : 'border-gray-200 hover:border-pink-300'
-                      }`}
-                    >
-                      <Image
-                        src={motif}
-                        alt={`Motif ${index + 1}`}
-                        fill
-                        className="object-contain p-2"
-                      />
-                    </button>
-                  ))}
+              ) : (
+                /* Étape 2 : Motifs */
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Choisissez un motif
+                  </label>
+                  <div className="mt-3 grid grid-cols-2 gap-4">
+                    {motifs.map((motif, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleMotifSelect(motif)}
+                        className={`relative aspect-square rounded-lg border overflow-hidden ${
+                          formData.motifSelectionne === motif
+                            ? 'border-pink-500 ring-2 ring-pink-500'
+                            : 'border-gray-200 hover:border-pink-300'
+                        }`}
+                      >
+                        <Image
+                          src={motif}
+                          alt={`Motif ${index + 1}`}
+                          fill
+                          className="object-contain p-2"
+                        />
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Bouton de validation */}
-              <button
-                type="submit"
-                className="mt-8 w-full bg-pink-600 py-3 px-4 rounded-md text-white font-medium hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-              >
-                Valider la personnalisation
-              </button>
+              {/* Navigation entre les étapes */}
+              <div className="flex justify-between mt-8">
+                {currentStep > 1 && (
+                  <button
+                    onClick={prevStep}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    Retour
+                  </button>
+                )}
+                {currentStep === 1 ? (
+                  <button
+                    onClick={nextStep}
+                    className="ml-auto px-4 py-2 bg-pink-600 text-white rounded-md text-sm font-medium hover:bg-pink-700"
+                  >
+                    Suivant
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="ml-auto px-4 py-2 bg-pink-600 text-white rounded-md text-sm font-medium hover:bg-pink-700"
+                  >
+                    Valider la personnalisation
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
