@@ -38,8 +38,21 @@ export default function MapComponent({ pointsRelais, onSelectPoint, selectedPoin
     link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
     document.head.appendChild(link);
 
+    // Ajout des styles personnalisés pour la carte
+    const style = document.createElement('style');
+    style.textContent = `
+      .leaflet-tile-pane {
+        filter: grayscale(0.3) hue-rotate(-10deg) !important;
+      }
+      .leaflet-container {
+        background: #f8f8f8 !important;
+      }
+    `;
+    document.head.appendChild(style);
+
     return () => {
       document.head.removeChild(link);
+      document.head.removeChild(style);
     };
   }, []);
 
@@ -63,7 +76,7 @@ export default function MapComponent({ pointsRelais, onSelectPoint, selectedPoin
         zoom={6}
         style={{ height: '400px', width: '100%' }}
         ref={mapRef}
-        className="z-0"
+        className="z-0 [&_.leaflet-tile-pane]:saturate-50"
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
