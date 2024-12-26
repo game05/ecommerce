@@ -338,30 +338,87 @@ export default function CommandePage() {
                 <h3 className="text-lg font-medium mb-4">Sélectionnez un point relais</h3>
                 {formData.codePostal.length === 5 ? (
                   pointsRelais.length > 0 ? (
-                    <div>
-                      <MapComponent
-                        pointsRelais={pointsRelais}
-                        onSelectPoint={(point) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            pointRelais: {
-                              id: point.ID,
-                              nom: point.Nom,
-                              adresse: point.Adresse1,
-                              codePostal: point.CP,
-                              ville: point.Ville,
-                              latitude: point.Latitude,
-                              longitude: point.Longitude
-                            }
-                          }));
-                        }}
-                      />
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        {/* Carte */}
+                        <div>
+                          <MapComponent
+                            pointsRelais={pointsRelais}
+                            selectedPointId={formData.pointRelais?.id}
+                            onSelectPoint={(point) => {
+                              setFormData(prev => ({
+                                ...prev,
+                                pointRelais: {
+                                  id: point.ID,
+                                  nom: point.Nom,
+                                  adresse: point.Adresse1,
+                                  codePostal: point.CP,
+                                  ville: point.Ville,
+                                  latitude: point.Latitude,
+                                  longitude: point.Longitude
+                                }
+                              }));
+                            }}
+                          />
+                        </div>
+
+                        {/* Liste des points relais */}
+                        <div className="bg-gray-50 rounded-lg overflow-hidden">
+                          <div className="divide-y divide-gray-200 max-h-[400px] overflow-y-auto">
+                            {pointsRelais.map((point) => (
+                              <div
+                                key={point.ID}
+                                className={`p-4 hover:bg-gray-100 cursor-pointer transition-colors ${
+                                  formData.pointRelais?.id === point.ID ? 'bg-rose-50 hover:bg-rose-100' : ''
+                                }`}
+                                onClick={() => {
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    pointRelais: {
+                                      id: point.ID,
+                                      nom: point.Nom,
+                                      adresse: point.Adresse1,
+                                      codePostal: point.CP,
+                                      ville: point.Ville,
+                                      latitude: point.Latitude,
+                                      longitude: point.Longitude
+                                    }
+                                  }));
+                                }}
+                              >
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <h4 className="font-medium">{point.Nom}</h4>
+                                    <p className="text-sm text-gray-600">{point.Adresse1}</p>
+                                    <p className="text-sm text-gray-600">{point.CP} {point.Ville}</p>
+                                  </div>
+                                  {formData.pointRelais?.id === point.ID && (
+                                    <span className="text-rose-600">
+                                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                      </svg>
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
                       {formData.pointRelais && (
-                        <div className="mt-4 p-4 bg-rose-50 rounded-lg">
-                          <h4 className="font-medium text-rose-900">Point relais sélectionné :</h4>
-                          <p className="text-rose-800">{formData.pointRelais.nom}</p>
-                          <p className="text-rose-700">{formData.pointRelais.adresse}</p>
-                          <p className="text-rose-700">{formData.pointRelais.codePostal} {formData.pointRelais.ville}</p>
+                        <div className="p-4 bg-rose-50 rounded-lg border border-rose-100">
+                          <div className="flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-rose-500" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <h4 className="font-medium text-rose-800">Point Relais sélectionné :</h4>
+                          </div>
+                          <div className="text-rose-700">
+                            <p className="font-medium">{formData.pointRelais.nom}</p>
+                            <p>{formData.pointRelais.adresse}</p>
+                            <p>{formData.pointRelais.codePostal} {formData.pointRelais.ville}</p>
+                          </div>
                         </div>
                       )}
                     </div>

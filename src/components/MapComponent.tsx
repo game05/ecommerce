@@ -25,9 +25,10 @@ function MapUpdater({ points }: { points: any[] }) {
 interface MapComponentProps {
   pointsRelais: any[];
   onSelectPoint: (point: any) => void;
+  selectedPointId?: string;
 }
 
-export default function MapComponent({ pointsRelais, onSelectPoint }: MapComponentProps) {
+export default function MapComponent({ pointsRelais, onSelectPoint, selectedPointId }: MapComponentProps) {
   const mapRef = useRef<L.Map>(null);
 
   useEffect(() => {
@@ -43,9 +44,9 @@ export default function MapComponent({ pointsRelais, onSelectPoint }: MapCompone
   }, []);
 
   // Création d'une icône personnalisée pour les points relais
-  const relayIcon = L.divIcon({
+  const createRelayIcon = (isSelected: boolean) => L.divIcon({
     className: 'bg-transparent',
-    html: `<div class="w-6 h-6 bg-rose-600 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-lg">PR</div>`,
+    html: `<div class="w-6 h-6 ${isSelected ? 'bg-rose-600' : 'bg-gray-600'} rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-lg transform ${isSelected ? 'scale-125' : ''} transition-transform">PR</div>`,
     iconSize: [24, 24],
     iconAnchor: [12, 12],
     popupAnchor: [0, -12]
@@ -73,7 +74,7 @@ export default function MapComponent({ pointsRelais, onSelectPoint }: MapCompone
           <Marker
             key={point.ID}
             position={[parseFloat(point.Latitude) / 100000, parseFloat(point.Longitude) / 100000]}
-            icon={relayIcon}
+            icon={createRelayIcon(point.ID === selectedPointId)}
           >
             <Popup>
               <div className="text-sm">
