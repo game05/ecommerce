@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
 
     console.log('Requête SOAP:', soapEnvelope);
 
-    const response = await fetch('http://api.mondialrelay.com/Web_Services.asmx', {
+    const response = await fetch('https://api.mondialrelay.com/Web_Services.asmx?op=WSI4_PointRelais_Recherche', {
       method: 'POST',
       headers: {
         'Content-Type': 'text/xml;charset=UTF-8',
@@ -92,6 +92,16 @@ export async function POST(request: NextRequest) {
       body: soapEnvelope,
       cache: 'no-store'
     });
+
+    if (!response.ok) {
+      console.error('Erreur HTTP:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('Contenu de l\'erreur:', errorText);
+      return NextResponse.json(
+        { error: `Erreur API Mondial Relay: ${response.status}` },
+        { status: response.status }
+      );
+    }
 
     const data = await response.text();
     console.log('Réponse brute:', data);
