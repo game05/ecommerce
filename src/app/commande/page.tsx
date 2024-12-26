@@ -333,53 +333,15 @@ export default function CommandePage() {
 
           {/* Section Mondial Relay */}
           {formData.livraisonMethod === 'mondialrelay' && (
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Choisir un point relais</h2>
-              
-              {/* Message d'aide */}
-              {formData.codePostal.length < 5 && (
-                <div className="p-4 bg-blue-50 text-blue-700 rounded-lg">
-                  Entrez votre code postal pour voir les points relais disponibles
-                </div>
-              )}
-
-              {/* Grille carte + liste */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Carte */}
-                <div className="h-[400px] border rounded-lg overflow-hidden">
-                  <MapComponent 
-                    pointsRelais={pointsRelais}
-                    onSelectPoint={(point) => {
-                      setFormData(prev => ({
-                        ...prev,
-                        pointRelais: {
-                          id: point.ID,
-                          nom: point.Nom,
-                          adresse: point.Adresse1,
-                          codePostal: point.CP,
-                          ville: point.Ville,
-                          latitude: point.Latitude,
-                          longitude: point.Longitude
-                        }
-                      }));
-                    }}
-                  />
-                </div>
-
-                {/* Liste des points relais */}
-                <div className="border rounded-lg divide-y">
-                  {pointsRelais.length === 0 && formData.codePostal.length === 5 ? (
-                    <div className="p-4 text-center text-gray-500">
-                      Aucun point relais trouvé pour ce code postal
-                    </div>
-                  ) : (
-                    pointsRelais.map((point) => (
-                      <div 
-                        key={point.ID}
-                        className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                          formData.pointRelais?.id === point.ID ? 'bg-blue-50' : ''
-                        }`}
-                        onClick={() => {
+            <div className="mt-4 space-y-4">
+              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-medium mb-4">Sélectionnez un point relais</h3>
+                {formData.codePostal.length === 5 ? (
+                  pointsRelais.length > 0 ? (
+                    <div>
+                      <MapComponent
+                        pointsRelais={pointsRelais}
+                        onSelectPoint={(point) => {
                           setFormData(prev => ({
                             ...prev,
                             pointRelais: {
@@ -393,43 +355,27 @@ export default function CommandePage() {
                             }
                           }));
                         }}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-medium">{point.Nom}</h3>
-                            <p className="text-sm text-gray-600">{point.Adresse1}</p>
-                            <p className="text-sm text-gray-600">{point.CP} {point.Ville}</p>
-                          </div>
-                          {formData.pointRelais?.id === point.ID && (
-                            <span className="text-blue-500">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                            </span>
-                          )}
+                      />
+                      {formData.pointRelais && (
+                        <div className="mt-4 p-4 bg-rose-50 rounded-lg">
+                          <h4 className="font-medium text-rose-900">Point relais sélectionné :</h4>
+                          <p className="text-rose-800">{formData.pointRelais.nom}</p>
+                          <p className="text-rose-700">{formData.pointRelais.adresse}</p>
+                          <p className="text-rose-700">{formData.pointRelais.codePostal} {formData.pointRelais.ville}</p>
                         </div>
-                      </div>
-                    ))
-                  )}
-                </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4 text-gray-500">
+                      Aucun point relais trouvé pour ce code postal
+                    </div>
+                  )
+                ) : (
+                  <div className="text-center py-4 text-gray-500">
+                    Entrez votre code postal pour voir les points relais disponibles
+                  </div>
+                )}
               </div>
-
-              {/* Point relais sélectionné */}
-              {formData.pointRelais && (
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <h4 className="font-medium text-green-800">Point Relais sélectionné :</h4>
-                  </div>
-                  <div className="text-green-700">
-                    <p className="font-medium">{formData.pointRelais.nom}</p>
-                    <p>{formData.pointRelais.adresse}</p>
-                    <p>{formData.pointRelais.codePostal} {formData.pointRelais.ville}</p>
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>

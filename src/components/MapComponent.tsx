@@ -15,7 +15,7 @@ function MapUpdater({ points }: { points: any[] }) {
         parseFloat(point.Latitude) / 100000,
         parseFloat(point.Longitude) / 100000
       ]));
-      map.fitBounds(bounds);
+      map.fitBounds(bounds, { padding: [50, 50] });
     }
   }, [points, map]);
 
@@ -42,56 +42,55 @@ export default function MapComponent({ pointsRelais, onSelectPoint }: MapCompone
     };
   }, []);
 
-  // Fix pour les icônes Leaflet
-  const defaultIcon = L.icon({
-    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    tooltipAnchor: [16, -28],
-    shadowSize: [41, 41]
+  // Création d'une icône personnalisée pour les points relais
+  const relayIcon = L.divIcon({
+    className: 'bg-transparent',
+    html: `<div class="w-6 h-6 bg-rose-600 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white shadow-lg">PR</div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    popupAnchor: [0, -12]
   });
-
-  L.Marker.prototype.options.icon = defaultIcon;
 
   if (typeof window === 'undefined') {
     return null;
   }
 
   return (
-    <MapContainer
-      center={[46.603354, 1.888334]}
-      zoom={6}
-      style={{ height: '100%', width: '100%' }}
-      ref={mapRef}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      <MapUpdater points={pointsRelais} />
-      {pointsRelais.map((point) => (
-        <Marker
-          key={point.ID}
-          position={[parseFloat(point.Latitude) / 100000, parseFloat(point.Longitude) / 100000]}
-        >
-          <Popup>
-            <div className="text-sm">
-              <p className="font-medium">{point.Nom}</p>
-              <p>{point.Adresse1}</p>
-              <p>{point.CP} {point.Ville}</p>
-              <button
-                className="mt-2 px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
-                onClick={() => onSelectPoint(point)}
-              >
-                Sélectionner
-              </button>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
+    <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+      <MapContainer
+        center={[46.603354, 1.888334]}
+        zoom={6}
+        style={{ height: '400px', width: '100%' }}
+        ref={mapRef}
+        className="z-0"
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+        <MapUpdater points={pointsRelais} />
+        {pointsRelais.map((point) => (
+          <Marker
+            key={point.ID}
+            position={[parseFloat(point.Latitude) / 100000, parseFloat(point.Longitude) / 100000]}
+            icon={relayIcon}
+          >
+            <Popup>
+              <div className="text-sm">
+                <p className="font-medium">{point.Nom}</p>
+                <p>{point.Adresse1}</p>
+                <p>{point.CP} {point.Ville}</p>
+                <button
+                  className="mt-2 px-3 py-1 bg-rose-600 text-white rounded text-xs hover:bg-rose-700 transition-colors"
+                  onClick={() => onSelectPoint(point)}
+                >
+                  Sélectionner
+                </button>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+    </div>
   );
 }
