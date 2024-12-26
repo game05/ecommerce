@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
 
     console.log('Recherche des points relais pour le code postal:', codePostal);
 
+    // Construction du XML SOAP
     const params = {
       Enseigne: mondialRelayConfig.enseigne,
       Pays: 'FR',
@@ -56,19 +57,39 @@ export async function POST(request: NextRequest) {
     const concatenatedString = Object.values(params).join('') + mondialRelayConfig.privateKey;
     const securityKey = md5(concatenatedString).toUpperCase();
 
-    const searchParams = new URLSearchParams({
-      ...params,
-      Security: securityKey
-    });
+    const soapEnvelope = `<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <WSI4_PointRelais_Recherche xmlns="http://www.mondialrelay.fr/webservice/">
+      <Enseigne>${params.Enseigne}</Enseigne>
+      <Pays>${params.Pays}</Pays>
+      <NumPointRelais>${params.NumPointRelais}</NumPointRelais>
+      <Ville>${params.Ville}</Ville>
+      <CP>${params.CP}</CP>
+      <Latitude>${params.Latitude}</Latitude>
+      <Longitude>${params.Longitude}</Longitude>
+      <Taille>${params.Taille}</Taille>
+      <Poids>${params.Poids}</Poids>
+      <Action>${params.Action}</Action>
+      <DelaiEnvoi>${params.DelaiEnvoi}</DelaiEnvoi>
+      <RayonRecherche>${params.RayonRecherche}</RayonRecherche>
+      <TypeActivite>${params.TypeActivite}</TypeActivite>
+      <NACE>${params.NACE}</NACE>
+      <NombreResultats>${params.NombreResultats}</NombreResultats>
+      <Security>${securityKey}</Security>
+    </WSI4_PointRelais_Recherche>
+  </soap:Body>
+</soap:Envelope>`;
 
-    console.log('Paramètres de recherche:', Object.fromEntries(searchParams));
+    console.log('Requête SOAP:', soapEnvelope);
 
-    const response = await fetch('https://api.mondialrelay.com/Web_Services.asmx/WSI4_PointRelais_Recherche', {
+    const response = await fetch('http://api.mondialrelay.com/Web_Services.asmx', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'text/xml;charset=UTF-8',
+        'SOAPAction': 'http://www.mondialrelay.fr/webservice/WSI4_PointRelais_Recherche',
       },
-      body: searchParams.toString(),
+      body: soapEnvelope,
       cache: 'no-store'
     });
 
