@@ -66,8 +66,9 @@ export default function MapComponent({ pointsRelais, onSelectPoint, selectedPoin
         className="z-0"
       >
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
+          attribution='&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          maxZoom={20}
         />
         <MapUpdater points={pointsRelais} />
         {pointsRelais.map((point) => (
