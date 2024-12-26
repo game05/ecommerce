@@ -61,14 +61,14 @@ export default function MapComponent({ pointsRelais, onSelectPoint, selectedPoin
       <MapContainer
         center={[46.603354, 1.888334]}
         zoom={6}
-        style={{ height: '400px', width: '100%' }}
+        style={{ height: '400px', width: '100%', background: '#f8f9fa' }}
         ref={mapRef}
         className="z-0"
       >
         <TileLayer
-          url="https://tile.openstreetmap.de/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          maxZoom={18}
+          url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+          maxZoom={20}
         />
         <MapUpdater points={pointsRelais} />
         {pointsRelais.map((point) => (
