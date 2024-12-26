@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { createPayment } from '@/lib/payplug';
 import { searchPointsRelais } from '@/lib/mondialrelay';
 import dynamic from 'next/dynamic';
+import FreeShippingBanner from '@/components/ui/FreeShippingBanner';
 
 interface FormData {
   prenom: string;
@@ -45,6 +46,7 @@ export default function CommandePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [pointsRelais, setPointsRelais] = useState<any[]>([]);
   const searchParams = useSearchParams();
+
   const [formData, setFormData] = useState<FormData>({
     prenom: '',
     nom: '',
@@ -55,8 +57,13 @@ export default function CommandePage() {
     livraisonMethod: 'colissimo'
   });
 
+  // Constants pour les seuils de livraison
+  const SEUIL_LIVRAISON_GRATUITE = 50;
+  const FRAIS_LIVRAISON_STANDARD = 4.99;
+
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const fraisLivraison = total >= 25 ? 0 : 4.99;
+  const fraisLivraison = total >= SEUIL_LIVRAISON_GRATUITE ? 0 : FRAIS_LIVRAISON_STANDARD;
+  const montantRestantLivraisonGratuite = Math.max(0, SEUIL_LIVRAISON_GRATUITE - total);
 
   // Charger les points relais quand le code postal change
   useEffect(() => {
@@ -318,12 +325,12 @@ export default function CommandePage() {
                   <span>Frais de livraison</span>
                   <span>{fraisLivraison === 0 ? 'Gratuit' : `${fraisLivraison.toFixed(2)}€`}</span>
                 </div>
-                {fraisLivraison > 0 && (
-                  <p className="text-sm text-gray-500">
-                    Plus que {(25 - total).toFixed(2)}€ d'achat pour la livraison gratuite !
-                  </p>
+                {montantRestantLivraisonGratuite > 0 && (
+                  <div className="my-2 bg-white shadow rounded-lg">
+                    <FreeShippingBanner remainingAmount={montantRestantLivraisonGratuite} />
+                  </div>
                 )}
-                <div className="flex justify-between font-bold text-lg">
+                <div className="flex justify-between font-bold text-lg border-t pt-2">
                   <span>Total</span>
                   <span>{(total + fraisLivraison).toFixed(2)}€</span>
                 </div>
