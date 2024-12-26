@@ -1,10 +1,12 @@
 'use client';
 
 import { useCart } from '@/hooks/useCart';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { createPayment } from '@/lib/payplug';
+import { searchPointsRelais } from '@/lib/mondialrelay';
+import dynamic from 'next/dynamic';
 
 interface FormData {
   prenom: string;
@@ -13,11 +15,35 @@ interface FormData {
   adresse: string;
   codePostal: string;
   ville: string;
+  livraisonMethod: 'colissimo' | 'mondialrelay';
+  pointRelais?: {
+    id: string;
+    nom: string;
+    adresse: string;
+    codePostal: string;
+    ville: string;
+    latitude?: string;
+    longitude?: string;
+  };
 }
+
+// Composant Map avec chargement dynamique côté client
+const MapComponent = dynamic(
+  () => import('@/components/MapComponent'),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[400px] flex items-center justify-center bg-gray-100 rounded-lg">
+        Chargement de la carte...
+      </div>
+    )
+  }
+);
 
 export default function CommandePage() {
   const { items, clearCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
+  const [pointsRelais, setPointsRelais] = useState<any[]>([]);
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState<FormData>({
     prenom: '',
@@ -25,11 +51,21 @@ export default function CommandePage() {
     email: '',
     adresse: '',
     codePostal: '',
-    ville: ''
+    ville: '',
+    livraisonMethod: 'colissimo'
   });
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const fraisLivraison = total >= 25 ? 0 : 4.99;
+
+  // Charger les points relais quand le code postal change
+  useEffect(() => {
+    if (formData.livraisonMethod === 'mondialrelay' && formData.codePostal.length === 5) {
+      searchPointsRelais(formData.codePostal).then(points => {
+        setPointsRelais(points);
+      });
+    }
+  }, [formData.codePostal, formData.livraisonMethod]);
 
   // Vérifier si le paiement a été annulé
   const canceled = searchParams.get('canceled');
@@ -37,7 +73,7 @@ export default function CommandePage() {
     alert('Le paiement a été annulé. Vous pouvez réessayer quand vous voulez.');
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -104,7 +140,7 @@ export default function CommandePage() {
                   id="prenom"
                   name="prenom"
                   value={formData.prenom}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   required
                   className="w-full p-2 border rounded"
                   placeholder="Jean"
@@ -117,7 +153,7 @@ export default function CommandePage() {
                   id="nom"
                   name="nom"
                   value={formData.nom}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   required
                   className="w-full p-2 border rounded"
                   placeholder="Dupont"
@@ -132,7 +168,7 @@ export default function CommandePage() {
                 id="email"
                 name="email"
                 value={formData.email}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className="w-full p-2 border rounded"
                 placeholder="jean.dupont@example.com"
@@ -146,7 +182,7 @@ export default function CommandePage() {
                 id="adresse"
                 name="adresse"
                 value={formData.adresse}
-                onChange={handleChange}
+                onChange={handleInputChange}
                 required
                 className="w-full p-2 border rounded"
                 placeholder="123 rue de la Paix"
@@ -161,7 +197,7 @@ export default function CommandePage() {
                   id="codePostal"
                   name="codePostal"
                   value={formData.codePostal}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   required
                   className="w-full p-2 border rounded"
                   placeholder="75000"
@@ -174,11 +210,65 @@ export default function CommandePage() {
                   id="ville"
                   name="ville"
                   value={formData.ville}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                   required
                   className="w-full p-2 border rounded"
                   placeholder="Paris"
                 />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Mode de livraison
+              </label>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                    formData.livraisonMethod === 'colissimo'
+                      ? 'border-primary ring-2 ring-primary bg-primary/5'
+                      : 'border-gray-200 hover:border-primary/50'
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, livraisonMethod: 'colissimo' }))}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      formData.livraisonMethod === 'colissimo' ? 'border-primary' : 'border-gray-300'
+                    }`}>
+                      {formData.livraisonMethod === 'colissimo' && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium">Colissimo</p>
+                      <p className="text-sm text-gray-500">Livraison à domicile</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                    formData.livraisonMethod === 'mondialrelay'
+                      ? 'border-primary ring-2 ring-primary bg-primary/5'
+                      : 'border-gray-200 hover:border-primary/50'
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, livraisonMethod: 'mondialrelay' }))}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      formData.livraisonMethod === 'mondialrelay' ? 'border-primary' : 'border-gray-300'
+                    }`}>
+                      {formData.livraisonMethod === 'mondialrelay' && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium">Mondial Relay</p>
+                      <p className="text-sm text-gray-500">Point relais</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -194,49 +284,154 @@ export default function CommandePage() {
           </form>
         </div>
 
-        {/* Récapitulatif de la commande */}
-        <div>
-          <h2 className="text-xl font-semibold mb-6">Récapitulatif de la commande</h2>
-          <div className="space-y-4">
-            {items.map((item, index) => (
-              <div key={index} className="flex items-center space-x-4 border-b pb-4">
-                <div className="relative w-20 h-20">
-                  <Image
-                    src={item.image_url}
-                    alt={item.name}
-                    fill
-                    style={{ objectFit: 'cover' }}
-                    className="rounded"
-                  />
+        {/* Récapitulatif et Point Relais */}
+        <div className="space-y-8">
+          {/* Récapitulatif de la commande */}
+          <div>
+            <h2 className="text-xl font-semibold mb-6">Récapitulatif de la commande</h2>
+            <div className="space-y-4">
+              {items.map((item, index) => (
+                <div key={index} className="flex items-center space-x-4 border-b pb-4">
+                  <div className="relative w-20 h-20">
+                    <Image
+                      src={item.image_url}
+                      alt={item.name}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      className="rounded"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium">{item.name}</h3>
+                    <p className="text-sm text-gray-500">Quantité: {item.quantity}</p>
+                    <p className="text-sm font-medium">{(item.price * item.quantity).toFixed(2)}€</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-medium">{item.name}</h3>
-                  <p className="text-sm text-gray-500">Quantité: {item.quantity}</p>
-                  <p className="text-sm font-medium">{(item.price * item.quantity).toFixed(2)}€</p>
-                </div>
-              </div>
-            ))}
+              ))}
 
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex justify-between">
-                <span>Sous-total</span>
-                <span>{total.toFixed(2)}€</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Frais de livraison</span>
-                <span>{fraisLivraison === 0 ? 'Gratuit' : `${fraisLivraison.toFixed(2)}€`}</span>
-              </div>
-              {fraisLivraison > 0 && (
-                <p className="text-sm text-gray-500">
-                  Plus que {(25 - total).toFixed(2)}€ d'achat pour la livraison gratuite !
-                </p>
-              )}
-              <div className="flex justify-between font-bold text-lg">
-                <span>Total</span>
-                <span>{(total + fraisLivraison).toFixed(2)}€</span>
+              <div className="border-t pt-4 space-y-2">
+                <div className="flex justify-between">
+                  <span>Sous-total</span>
+                  <span>{total.toFixed(2)}€</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Frais de livraison</span>
+                  <span>{fraisLivraison === 0 ? 'Gratuit' : `${fraisLivraison.toFixed(2)}€`}</span>
+                </div>
+                {fraisLivraison > 0 && (
+                  <p className="text-sm text-gray-500">
+                    Plus que {(25 - total).toFixed(2)}€ d'achat pour la livraison gratuite !
+                  </p>
+                )}
+                <div className="flex justify-between font-bold text-lg">
+                  <span>Total</span>
+                  <span>{(total + fraisLivraison).toFixed(2)}€</span>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Section Mondial Relay */}
+          {formData.livraisonMethod === 'mondialrelay' && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">Choisir un point relais</h2>
+              
+              {/* Message d'aide */}
+              {formData.codePostal.length < 5 && (
+                <div className="p-4 bg-blue-50 text-blue-700 rounded-lg">
+                  Entrez votre code postal pour voir les points relais disponibles
+                </div>
+              )}
+
+              {/* Grille carte + liste */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Carte */}
+                <div className="h-[400px] border rounded-lg overflow-hidden">
+                  <MapComponent 
+                    pointsRelais={pointsRelais}
+                    onSelectPoint={(point) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        pointRelais: {
+                          id: point.ID,
+                          nom: point.Nom,
+                          adresse: point.Adresse1,
+                          codePostal: point.CP,
+                          ville: point.Ville,
+                          latitude: point.Latitude,
+                          longitude: point.Longitude
+                        }
+                      }));
+                    }}
+                  />
+                </div>
+
+                {/* Liste des points relais */}
+                <div className="border rounded-lg divide-y">
+                  {pointsRelais.length === 0 && formData.codePostal.length === 5 ? (
+                    <div className="p-4 text-center text-gray-500">
+                      Aucun point relais trouvé pour ce code postal
+                    </div>
+                  ) : (
+                    pointsRelais.map((point) => (
+                      <div 
+                        key={point.ID}
+                        className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
+                          formData.pointRelais?.id === point.ID ? 'bg-blue-50' : ''
+                        }`}
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            pointRelais: {
+                              id: point.ID,
+                              nom: point.Nom,
+                              adresse: point.Adresse1,
+                              codePostal: point.CP,
+                              ville: point.Ville,
+                              latitude: point.Latitude,
+                              longitude: point.Longitude
+                            }
+                          }));
+                        }}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-medium">{point.Nom}</h3>
+                            <p className="text-sm text-gray-600">{point.Adresse1}</p>
+                            <p className="text-sm text-gray-600">{point.CP} {point.Ville}</p>
+                          </div>
+                          {formData.pointRelais?.id === point.ID && (
+                            <span className="text-blue-500">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Point relais sélectionné */}
+              {formData.pointRelais && (
+                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <h4 className="font-medium text-green-800">Point Relais sélectionné :</h4>
+                  </div>
+                  <div className="text-green-700">
+                    <p className="font-medium">{formData.pointRelais.nom}</p>
+                    <p>{formData.pointRelais.adresse}</p>
+                    <p>{formData.pointRelais.codePostal} {formData.pointRelais.ville}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
