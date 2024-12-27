@@ -1,0 +1,452 @@
+{
+  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site",
+  "is_file": false,
+  "children": [
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\doc",
+      "is_file": false,
+      "children": [
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\doc\\project_structure.json",
+          "size": 16453,
+          "is_file": true
+        },
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\doc\\project_structure.md",
+          "size": 2853,
+          "is_file": true
+        },
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\doc\\scripts",
+          "is_file": false,
+          "children": [
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\doc\\scripts\\analyze_project.py",
+              "size": 3019,
+              "is_file": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\next-env.d.ts",
+      "size": 206,
+      "is_file": true
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\next.config.js",
+      "size": 362,
+      "is_file": true
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\package-lock.json",
+      "size": 220066,
+      "is_file": true
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\package.json",
+      "size": 957,
+      "is_file": true
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\postcss.config.js",
+      "size": 82,
+      "is_file": true
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\public",
+      "is_file": false,
+      "children": [
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\public\\images",
+          "is_file": false,
+          "children": [
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\public\\images\\empty-cart-cat.png",
+              "size": 54872,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\public\\images\\header-img.jpg",
+              "size": 104749,
+              "is_file": true
+            }
+          ]
+        },
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\public\\motif",
+          "is_file": false,
+          "children": [
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\public\\motif\\motif1.png",
+              "size": 214938,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\public\\motif\\motif2.png",
+              "size": 109241,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\public\\motif\\motif3.png",
+              "size": 167244,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\public\\motif\\motif4.png",
+              "size": 271059,
+              "is_file": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\README.md",
+      "size": 556,
+      "is_file": true
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src",
+      "is_file": false,
+      "children": [
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app",
+          "is_file": false,
+          "children": [
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api",
+              "is_file": false,
+              "children": [
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\email",
+                  "is_file": false,
+                  "children": [
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\email\\order-confirmation",
+                      "is_file": false,
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\mondialrelay",
+                  "is_file": false,
+                  "children": [
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\mondialrelay\\route.ts",
+                      "size": 5552,
+                      "is_file": true
+                    }
+                  ]
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\payment",
+                  "is_file": false,
+                  "children": [
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\payment\\route.ts",
+                      "size": 3992,
+                      "is_file": true
+                    },
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\payment\\verify",
+                      "is_file": false,
+                      "children": [
+                        {
+                          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\payment\\verify\\route.ts",
+                          "size": 2579,
+                          "is_file": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\webhooks",
+                  "is_file": false,
+                  "children": [
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\webhooks\\payplug",
+                      "is_file": false,
+                      "children": [
+                        {
+                          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\api\\webhooks\\payplug\\route.ts",
+                          "size": 603,
+                          "is_file": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\commande",
+              "is_file": false,
+              "children": [
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\commande\\annulation",
+                  "is_file": false,
+                  "children": [
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\commande\\annulation\\page.tsx",
+                      "size": 1274,
+                      "is_file": true
+                    }
+                  ]
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\commande\\confirmation",
+                  "is_file": false,
+                  "children": [
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\commande\\confirmation\\page.tsx",
+                      "size": 2371,
+                      "is_file": true
+                    }
+                  ]
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\commande\\layout.tsx",
+                  "size": 370,
+                  "is_file": true
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\commande\\page.tsx",
+                  "size": 18451,
+                  "is_file": true
+                }
+              ]
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\globals.css",
+              "size": 1529,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\layout.tsx",
+              "size": 1027,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\not-found.tsx",
+              "size": 1599,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\page.tsx",
+              "size": 8780,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\personnalisation",
+              "is_file": false,
+              "children": [
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\personnalisation\\[slug]",
+                  "is_file": false,
+                  "children": [
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\personnalisation\\[slug]\\loading.tsx",
+                      "size": 69,
+                      "is_file": true
+                    },
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\personnalisation\\[slug]\\page.tsx",
+                      "size": 11371,
+                      "is_file": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\produit",
+              "is_file": false,
+              "children": [
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\produit\\[slug]",
+                  "is_file": false,
+                  "children": [
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\produit\\[slug]\\loading.tsx",
+                      "size": 69,
+                      "is_file": true
+                    },
+                    {
+                      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\produit\\[slug]\\page.tsx",
+                      "size": 10248,
+                      "is_file": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\serviettes",
+              "is_file": false,
+              "children": [
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\serviettes\\loading.tsx",
+                  "size": 69,
+                  "is_file": true
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\serviettes\\page.tsx",
+                  "size": 7354,
+                  "is_file": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components",
+          "is_file": false,
+          "children": [
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\animations",
+              "is_file": false,
+              "children": [
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\animations\\CartFlyAnimation.tsx",
+                  "size": 1813,
+                  "is_file": true
+                }
+              ]
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\cart",
+              "is_file": false,
+              "children": [
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\cart\\SlideCart.tsx",
+                  "size": 5411,
+                  "is_file": true
+                }
+              ]
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\layout",
+              "is_file": false,
+              "children": [
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\layout\\Footer.tsx",
+                  "size": 2742,
+                  "is_file": true
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\layout\\MobileMenu.tsx",
+                  "size": 2344,
+                  "is_file": true
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\layout\\Navbar.tsx",
+                  "size": 2242,
+                  "is_file": true
+                }
+              ]
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\loading.tsx",
+              "size": 447,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\MapComponent.tsx",
+              "size": 3236,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\ui",
+              "is_file": false,
+              "children": [
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\ui\\FreeShippingBanner.tsx",
+                  "size": 1493,
+                  "is_file": true
+                },
+                {
+                  "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\ui\\PromoBadge.tsx",
+                  "size": 598,
+                  "is_file": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\hooks",
+          "is_file": false,
+          "children": [
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\hooks\\useCart.ts",
+              "size": 2047,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\hooks\\useCart.tsx",
+              "size": 2261,
+              "is_file": true
+            }
+          ]
+        },
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\lib",
+          "is_file": false,
+          "children": [
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\lib\\mondialrelay.ts",
+              "size": 1436,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\lib\\payplug.ts",
+              "size": 2217,
+              "is_file": true
+            },
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\lib\\supabase.ts",
+              "size": 420,
+              "is_file": true
+            }
+          ]
+        },
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\providers",
+          "is_file": false,
+          "children": [
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\providers\\CartProvider.tsx",
+              "size": 363,
+              "is_file": true
+            }
+          ]
+        },
+        {
+          "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\types",
+          "is_file": false,
+          "children": [
+            {
+              "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\types\\global.d.ts",
+              "size": 46,
+              "is_file": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\tailwind.config.ts",
+      "size": 473,
+      "is_file": true
+    },
+    {
+      "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\tsconfig.json",
+      "size": 599,
+      "is_file": true
+    }
+  ]
+}

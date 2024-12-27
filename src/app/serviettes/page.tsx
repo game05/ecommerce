@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bath, Heart, Sparkles } from 'lucide-react';
+import { Bath, Heart, Sparkles, Ruler } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
 import Loading from '@/components/loading';
@@ -15,18 +15,48 @@ type Product = {
   price: number;
   image_url: string;
   stock: number;
+  size?: 'small' | 'medium' | 'large'; // 50x100, 70x140, 100x150
 };
+
+// Types de tailles disponibles
+const SIZES = [
+  {
+    id: 'small',
+    name: 'Serviette de toilette',
+    dimensions: '50x100 cm',
+    icon: '🧸',
+    description: 'Idéale pour la toilette quotidienne',
+    color: 'bg-pink-100'
+  },
+  {
+    id: 'medium',
+    name: 'Drap de douche',
+    dimensions: '70x140 cm',
+    icon: '🚿',
+    description: 'Parfaite pour la douche',
+    color: 'bg-purple-100'
+  },
+  {
+    id: 'large',
+    name: 'Drap de bain',
+    dimensions: '100x150 cm',
+    icon: '🛁',
+    description: 'Idéal pour le bain',
+    color: 'bg-blue-100'
+  }
+];
 
 export default function ServiettesPage() {
   const [serviettes, setServiettes] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   useEffect(() => {
     async function getProducts() {
       try {
         const { data, error } = await supabase
           .from('products')
-          .select('*')
+          .select('id, name, description, price, image_url, stock, size')
           .eq('category', 'Serviettes')
           .order('id');
 
@@ -41,6 +71,11 @@ export default function ServiettesPage() {
 
     getProducts();
   }, []);
+
+  // Filtrer les serviettes selon la taille sélectionnée
+  const filteredServiettes = selectedSize
+    ? serviettes.filter(s => s.size === selectedSize)
+    : serviettes;
 
   if (loading) {
     return <Loading />;
@@ -63,47 +98,62 @@ export default function ServiettesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
-      {/* Header */}
-      <div className="mb-12">
-        {/* En-tête avec icônes */}
-        <div className="flex items-center justify-center space-x-3 mb-4">
-          <Bath className="h-8 w-8 text-pink-500" />
-          <Sparkles className="h-6 w-6 text-pink-400" />
-          <Heart className="h-7 w-7 text-pink-500" />
-        </div>
+      {/* Filtres de taille */}
+      <div className="mb-8 md:mb-12">
+        {/* Titre */}
+        <h2 className="text-2xl md:text-2xl font-bold text-center mb-6">
+          Choisissez votre taille
+        </h2>
 
-        {/* Titre et description */}
-        <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Des Serviettes{' '}
-            <span className="text-pink-500">Douces et Confortables</span>
-            <br />pour Votre Bébé
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-6">
-            Découvrez notre collection de serviettes délicates, spécialement conçues 
-            pour envelopper votre petit trésor dans un cocon de douceur après le bain.
-          </p>
-        </div>
+        {/* Grille de sélection */}
+        <div className="grid grid-cols-1 gap-3 max-w-sm md:max-w-4xl mx-auto px-4 md:px-0 md:grid-cols-3 md:gap-4">
+          {SIZES.map((size) => (
+            <button
+              key={size.id}
+              onClick={() => setSelectedSize(selectedSize === size.id ? null : size.id)}
+              className={`relative overflow-hidden transition-all duration-200 ${
+                selectedSize === size.id
+                  ? 'bg-pink-50 border-2 border-pink-400'
+                  : 'bg-white border border-gray-100 hover:border-pink-200'
+              } rounded-xl shadow-sm`}
+            >
+              {/* Indicateur de sélection */}
+              {selectedSize === size.id && (
+                <div className="absolute top-2 right-2 w-5 h-5 bg-pink-400 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-full" />
+                </div>
+              )}
 
-        {/* Badges caractéristiques */}
-        <div className="flex flex-wrap justify-center gap-3">
-          <span className="bg-pink-50 px-4 py-2 rounded-full text-sm font-medium text-pink-600">
-            100% Coton Bio
-          </span>
-          <span className="bg-pink-50 px-4 py-2 rounded-full text-sm font-medium text-pink-600">
-            Ultra Absorbantes
-          </span>
-          <span className="bg-pink-50 px-4 py-2 rounded-full text-sm font-medium text-pink-600">
-            Douces pour la Peau
-          </span>
+              <div className="flex flex-row md:flex-col items-center p-4 md:p-6">
+                {/* Icône */}
+                <div className="flex-shrink-0 w-12 md:w-auto text-center mb-0 md:mb-3">
+                  <span className="text-2xl md:text-3xl">{size.icon}</span>
+                </div>
+
+                {/* Contenu */}
+                <div className="flex-1 ml-4 md:ml-0">
+                  <h3 className="font-semibold text-base md:text-lg mb-1">
+                    {size.name}
+                  </h3>
+                  <div className="flex items-center space-x-1 mb-1 text-pink-600">
+                    <Ruler className="h-3.5 w-3.5" />
+                    <span className="text-sm font-medium">{size.dimensions}</span>
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-500">
+                    {size.description}
+                  </p>
+                </div>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {serviettes.map((serviette) => {
-          // Création du slug à partir du nom du produit
+        {filteredServiettes.map((serviette) => {
           const slug = encodeURIComponent(serviette.name.toLowerCase().replace(/ /g, '-'));
+          const sizeInfo = SIZES.find(s => s.id === serviette.size);
 
           return (
             <Link 
@@ -127,6 +177,12 @@ export default function ServiettesPage() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-pink-500 transition-colors">
                   {serviette.name}
                 </h3>
+                {sizeInfo && (
+                  <div className="mb-2 flex items-center space-x-2">
+                    <span className="text-2xl">{sizeInfo.icon}</span>
+                    <span className="text-sm text-gray-600">{sizeInfo.dimensions}</span>
+                  </div>
+                )}
                 <p className="text-gray-600 mb-4 line-clamp-2">
                   {serviette.description}
                 </p>

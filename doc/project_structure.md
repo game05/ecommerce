@@ -1,0 +1,88 @@
+# Structure du Projet La Chabroderie
+
+## Arborescence Complète
+
+- 📁 **site/**
+  - 📁 **doc/**
+    - 📁 **scripts/**
+      - 📄 `analyze_project.py` (2.9 KB)
+    - 📄 `project_structure.json` (16.1 KB)
+    - 📄 `project_structure.md` (2.8 KB)
+  - 📁 **public/**
+    - 📁 **images/**
+      - 📄 `empty-cart-cat.png` (53.6 KB)
+      - 📄 `header-img.jpg` (102.3 KB)
+    - 📁 **motif/**
+      - 📄 `motif1.png` (209.9 KB)
+      - 📄 `motif2.png` (106.7 KB)
+      - 📄 `motif3.png` (163.3 KB)
+      - 📄 `motif4.png` (264.7 KB)
+  - 📁 **src/**
+    - 📁 **app/**
+      - 📁 **api/**
+        - 📁 **email/**
+          - 📁 **order-confirmation/**
+        - 📁 **mondialrelay/**
+          - 📄 `route.ts` (5.4 KB)
+        - 📁 **payment/**
+          - 📁 **verify/**
+            - 📄 `route.ts` (2.5 KB)
+          - 📄 `route.ts` (3.9 KB)
+        - 📁 **webhooks/**
+          - 📁 **payplug/**
+            - 📄 `route.ts` (603 bytes)
+      - 📁 **commande/**
+        - 📁 **annulation/**
+          - 📄 `page.tsx` (1.2 KB)
+        - 📁 **confirmation/**
+          - 📄 `page.tsx` (2.3 KB)
+        - 📄 `layout.tsx` (370 bytes)
+        - 📄 `page.tsx` (18.0 KB)
+      - 📁 **personnalisation/**
+        - 📁 **[slug]/**
+          - 📄 `loading.tsx` (69 bytes)
+          - 📄 `page.tsx` (11.1 KB)
+      - 📁 **produit/**
+        - 📁 **[slug]/**
+          - 📄 `loading.tsx` (69 bytes)
+          - 📄 `page.tsx` (10.0 KB)
+      - 📁 **serviettes/**
+        - 📄 `loading.tsx` (69 bytes)
+        - 📄 `page.tsx` (7.2 KB)
+      - 📄 `globals.css` (1.5 KB)
+      - 📄 `layout.tsx` (1.0 KB)
+      - 📄 `not-found.tsx` (1.6 KB)
+      - 📄 `page.tsx` (8.6 KB)
+    - 📁 **components/**
+      - 📁 **animations/**
+        - 📄 `CartFlyAnimation.tsx` (1.8 KB)
+      - 📁 **cart/**
+        - 📄 `SlideCart.tsx` (5.3 KB)
+      - 📁 **layout/**
+        - 📄 `Footer.tsx` (2.7 KB)
+        - 📄 `MobileMenu.tsx` (2.3 KB)
+        - 📄 `Navbar.tsx` (2.2 KB)
+      - 📁 **ui/**
+        - 📄 `FreeShippingBanner.tsx` (1.5 KB)
+        - 📄 `PromoBadge.tsx` (598 bytes)
+      - 📄 `MapComponent.tsx` (3.2 KB)
+      - 📄 `loading.tsx` (447 bytes)
+    - 📁 **hooks/**
+      - 📄 `useCart.ts` (2.0 KB)
+      - 📄 `useCart.tsx` (2.2 KB)
+    - 📁 **lib/**
+      - 📄 `mondialrelay.ts` (1.4 KB)
+      - 📄 `payplug.ts` (2.2 KB)
+      - 📄 `supabase.ts` (420 bytes)
+    - 📁 **providers/**
+      - 📄 `CartProvider.tsx` (363 bytes)
+    - 📁 **types/**
+      - 📄 `global.d.ts` (46 bytes)
+  - 📄 `README.md` (556 bytes)
+  - 📄 `next-env.d.ts` (206 bytes)
+  - 📄 `next.config.js` (362 bytes)
+  - 📄 `package-lock.json` (214.9 KB)
+  - 📄 `package.json` (957 bytes)
+  - 📄 `postcss.config.js` (82 bytes)
+  - 📄 `tailwind.config.ts` (473 bytes)
+  - 📄 `tsconfig.json` (599 bytes)
