@@ -57,6 +57,28 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
     getProduct();
   }, [params.slug]);
 
+  useEffect(() => {
+    const updateCartIconPosition = () => {
+      const cartIcon = document.querySelector('.cart-icon');
+      if (cartIcon) {
+        const rect = cartIcon.getBoundingClientRect();
+        // setCartIconPosition({
+        //   x: rect.right - 20,
+        //   y: rect.top + rect.height / 2
+        // });
+      }
+    };
+
+    updateCartIconPosition();
+    window.addEventListener('resize', updateCartIconPosition);
+    const interval = setInterval(updateCartIconPosition, 1000);
+
+    return () => {
+      window.removeEventListener('resize', updateCartIconPosition);
+      clearInterval(interval);
+    };
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -294,7 +316,6 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                             motif: formData.motifSelectionne
                           }
                         });
-                        // Ouvrir le SlideCart après l'ajout
                         openCart();
                       }
                     }}
