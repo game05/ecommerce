@@ -23,7 +23,14 @@ export default function AdminLogin() {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message === 'Email not confirmed') {
+          setError('Veuillez confirmer votre email ou contactez l\'administrateur');
+        } else {
+          throw error;
+        }
+        return;
+      }
 
       if (data.user) {
         router.push('/brodadmin/dashboard');
