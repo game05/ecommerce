@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Loading from '@/components/loading';
@@ -8,9 +8,21 @@ import Loading from '@/components/loading';
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        router.push('/brodadmin/dashboard');
+      } else {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,18 +35,15 @@ export default function AdminLogin() {
         password,
       });
 
-      // Ignorer l'erreur de confirmation d'email
-      if (error && error.message !== 'Email not confirmed') {
-        throw error;
-      }
+      if (error) throw error;
 
-      // Si on a un utilisateur, on redirige même si l'email n'est pas confirmé
-      if (data?.user || (error && error.message === 'Email not confirmed')) {
+      if (data?.user) {
         router.push('/brodadmin/dashboard');
-        return;
       }
     } catch (error: any) {
-      setError(error.message || 'Une erreur est survenue lors de la connexion');
+      setError(error.message === 'Email not confirmed' 
+        ? 'Veuillez confirmer votre email ou contactez l\'administrateur'
+        : error.message || 'Une erreur est survenue lors de la connexion');
     } finally {
       setLoading(false);
     }

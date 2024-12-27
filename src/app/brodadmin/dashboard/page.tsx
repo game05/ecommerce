@@ -24,16 +24,22 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
-    fetchProducts();
-  }, []);
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+          router.push('/brodadmin');
+          return;
+        }
+        fetchProducts();
+      } catch (error) {
+        console.error('Erreur de vérification de session:', error);
+        router.push('/brodadmin');
+      }
+    };
 
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      router.push('/brodadmin');
-    }
-  };
+    checkAuth();
+  }, [router]);
 
   const fetchProducts = async () => {
     try {
