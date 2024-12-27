@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
+import { useCart } from '@/hooks/useCart';
 
 type Product = {
   id: number;
@@ -25,6 +26,7 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
+  const { addToCart, openCart } = useCart();
   const [formData, setFormData] = useState({
     prenom: '',
     motifSelectionne: ''
@@ -279,7 +281,23 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                   </button>
                 ) : (
                   <button
-                    type="submit"
+                    onClick={() => {
+                      if (product) {
+                        addToCart({
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          image_url: product.image_url,
+                          quantity: 1,
+                          customization: {
+                            prenom: formData.prenom,
+                            motif: formData.motifSelectionne
+                          }
+                        });
+                        // Ouvrir le SlideCart après l'ajout
+                        openCart();
+                      }
+                    }}
                     className="ml-auto px-6 py-3 bg-pink-600 text-white rounded-md text-sm font-medium hover:bg-pink-700 transition-colors duration-200"
                   >
                     Ajouter au panier

@@ -125,9 +125,41 @@ export default function CommandePage() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-2xl font-bold mb-4">Votre panier est vide</h1>
-        <p>Ajoutez des articles à votre panier pour passer commande.</p>
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+            <div className="mb-6">
+              <div className="relative w-48 h-48 mx-auto mb-6">
+                <Image
+                  src="/images/empty-cart-cat.png"
+                  alt="Panier vide"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <h1 className="text-2xl font-semibold text-gray-900 mb-3">
+                Votre panier est vide
+              </h1>
+              <p className="text-gray-600 mb-8">
+                Ajoutez des articles à votre panier pour passer commande.
+              </p>
+            </div>
+            <div className="flex justify-center space-x-4">
+              <a
+                href="/"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 transition-colors duration-200"
+              >
+                Retour à la boutique
+              </a>
+              <a
+                href="/personnalisation"
+                className="inline-flex items-center px-6 py-3 border border-pink-600 text-base font-medium rounded-md text-pink-600 bg-white hover:bg-pink-50 transition-colors duration-200"
+              >
+                Personnaliser un article
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -310,8 +342,28 @@ export default function CommandePage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-medium">{item.name}</h3>
-                    <p className="text-sm text-gray-500">Quantité: {item.quantity}</p>
-                    <p className="text-sm font-medium">{(item.price * item.quantity).toFixed(2)}€</p>
+                    {item.customization && (
+                      <div className="text-sm text-gray-600 mt-1 space-y-1">
+                        <p>
+                          <span className="font-medium">Prénom :</span> {item.customization.prenom}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">Motif :</span>
+                          <div className="relative w-6 h-6">
+                            <Image
+                              src={item.customization.motif}
+                              alt="Motif personnalisé"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div className="mt-1">
+                      <p className="text-sm text-gray-500">Quantité : {item.quantity}</p>
+                      <p className="text-sm font-medium">{(item.price * item.quantity).toFixed(2)}€</p>
+                    </div>
                   </div>
                 </div>
               ))}
