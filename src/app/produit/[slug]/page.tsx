@@ -5,10 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { Heart, Box, Truck, RefreshCw, ShoppingCart } from 'lucide-react';
+import { Heart, Box, Truck, RefreshCw, ShoppingCart, Star } from 'lucide-react';
 import CartFlyAnimation from '@/components/animations/CartFlyAnimation';
 import { motion } from 'framer-motion';
 import { useCart } from '@/hooks/useCart';
+import ProductReviews from '@/components/reviews/ProductReviews';
 
 type Product = {
   id: number;
@@ -26,6 +27,8 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   const [loading, setLoading] = useState(true);
   const [showFlyAnimation, setShowFlyAnimation] = useState(false);
   const [cartIconPosition, setCartIconPosition] = useState({ x: 0, y: 0 });
+  const [averageRating, setAverageRating] = useState<number>(0);
+  const [totalReviews, setTotalReviews] = useState<number>(0);
   const { addToCart, openCart } = useCart();
 
   useEffect(() => {
@@ -73,6 +76,25 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
     getProduct();
   }, [params.slug]);
+
+  useEffect(() => {
+    async function getProductRating() {
+      if (product) {
+        try {
+          const { data } = await supabase.rpc('get_product_rating', {
+            product_id_param: product.id
+          });
+          if (data && data[0]) {
+            setAverageRating(data[0].average_rating || 0);
+            setTotalReviews(data[0].total_reviews || 0);
+          }
+        } catch (error) {
+          console.error('Erreur lors de la récupération des avis:', error);
+        }
+      }
+    }
+    getProductRating();
+  }, [product]);
 
   const handleAddToCart = () => {
     if (product) {
@@ -146,6 +168,26 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
               <h1 className="text-4xl font-bold text-gray-900">
                 {product.name}
               </h1>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-5 h-5 ${
+                        star <= averageRating
+                          ? 'text-yellow-400 fill-yellow-400'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <a 
+                  href="#reviews" 
+                  className="text-sm text-gray-600 hover:text-gray-800 hover:underline"
+                >
+                  {totalReviews} avis
+                </a>
+              </div>
               <p className="text-2xl font-semibold text-pink-500">
                 {product.price.toFixed(2)}€
               </p>
@@ -262,6 +304,41 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
             </div>
           </div>
         </div>
+
+        {/* Message de satisfaction */}
+        <div className="text-center max-w-3xl mx-auto mt-24 mb-16">
+          <h2 className="text-3xl font-bold mb-6 relative inline-block">
+            La Chabroderie est là pour vous combler de satisfaction !
+            <svg 
+              className="absolute -bottom-2 left-1/2 transform -translate-x-1/2"
+              width="180" 
+              height="12" 
+              viewBox="0 0 180 12" 
+              fill="none"
+            >
+              <path 
+                d="M2 7.5C30 7.5 30 2 60 2C90 2 90 7.5 120 7.5C150 7.5 150 2 178 2" 
+                stroke="#EC4899" 
+                strokeWidth="3" 
+                strokeLinecap="round"
+              />
+            </svg>
+          </h2>
+          <p className="text-gray-700 mb-4">
+            Nous mettons tout en œuvre pour vous offrir la meilleure expérience possible. 
+            C'est pourquoi nos fiches produits sont actuellement en cours de préparation, 
+            afin de vous garantir une présentation soignée et complète.
+          </p>
+          <p className="text-gray-700 mb-4">
+            Merci de votre patience et de votre confiance.
+          </p>
+          <p className="text-lg font-medium text-gray-900">
+            Evelyne
+          </p>
+        </div>
+
+        {/* Section des avis */}
+        <ProductReviews productId={product.id} />
       </div>
     </>
   );

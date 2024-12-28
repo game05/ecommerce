@@ -22,6 +22,9 @@ const motifs = [
   '/motif/motif4.png'
 ];
 
+// Prix du motif
+const MOTIF_PRICE = 3;
+
 export default function PersonnalisationPage({ params }: { params: { slug: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -218,9 +221,15 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
               ) : currentStep === 2 ? (
                 /* Étape 2 : Motifs */
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Choisissez un motif
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-medium text-gray-900">Choisissez un motif</h3>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-pink-100 text-pink-800">
+                      +3€
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    Ajoutez une touche unique à votre article avec un joli motif
+                  </p>
                   <div className="mt-2 grid grid-cols-3 gap-2">
                     {motifs.map((motif, index) => (
                       <button
@@ -263,7 +272,7 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-gray-200">
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Motif</p>
+                        <p className="text-sm font-medium text-gray-500">Motif (+3€)</p>
                         <div className="w-16 h-16 relative mt-1">
                           <Image
                             src={formData.motifSelectionne}
@@ -279,6 +288,14 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                       >
                         Modifier
                       </button>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <div className="flex justify-between">
+                        <p className="text-base font-medium text-gray-900">Prix total</p>
+                        <p className="text-base font-medium text-gray-900">
+                          {product ? `${(product.price + (formData.motifSelectionne ? MOTIF_PRICE : 0)).toFixed(2)}€` : ''}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -308,7 +325,7 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                         addToCart({
                           id: product.id,
                           name: product.name,
-                          price: product.price,
+                          price: product.price + (formData.motifSelectionne ? MOTIF_PRICE : 0),
                           image_url: product.image_url,
                           quantity: 1,
                           customization: {

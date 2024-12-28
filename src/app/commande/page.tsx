@@ -348,7 +348,7 @@ export default function CommandePage() {
                           <span className="font-medium">Prénom :</span> {item.customization.prenom}
                         </p>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">Motif :</span>
+                          <span className="font-medium">Motif (+3€) :</span>
                           <div className="relative w-6 h-6">
                             <Image
                               src={item.customization.motif}

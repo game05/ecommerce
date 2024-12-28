@@ -6,8 +6,8 @@
   - 📁 **doc/**
     - 📁 **scripts/**
       - 📄 `analyze_project.py` (2.9 KB)
-    - 📄 `project_structure.json` (16.1 KB)
-    - 📄 `project_structure.md` (2.8 KB)
+    - 📄 `project_structure.json` (16.6 KB)
+    - 📄 `project_structure.md` (2.9 KB)
   - 📁 **public/**
     - 📁 **images/**
       - 📄 `empty-cart-cat.png` (53.6 KB)
@@ -37,31 +37,33 @@
         - 📁 **confirmation/**
           - 📄 `page.tsx` (2.3 KB)
         - 📄 `layout.tsx` (370 bytes)
-        - 📄 `page.tsx` (18.0 KB)
+        - 📄 `page.tsx` (20.3 KB)
       - 📁 **personnalisation/**
         - 📁 **[slug]/**
           - 📄 `loading.tsx` (69 bytes)
-          - 📄 `page.tsx` (11.1 KB)
+          - 📄 `page.tsx` (13.4 KB)
       - 📁 **produit/**
         - 📁 **[slug]/**
           - 📄 `loading.tsx` (69 bytes)
-          - 📄 `page.tsx` (10.0 KB)
+          - 📄 `page.tsx` (12.8 KB)
       - 📁 **serviettes/**
         - 📄 `loading.tsx` (69 bytes)
-        - 📄 `page.tsx` (7.2 KB)
+        - 📄 `page.tsx` (9.0 KB)
       - 📄 `globals.css` (1.5 KB)
       - 📄 `layout.tsx` (1.0 KB)
       - 📄 `not-found.tsx` (1.6 KB)
-      - 📄 `page.tsx` (8.6 KB)
+      - 📄 `page.tsx` (3.8 KB)
     - 📁 **components/**
       - 📁 **animations/**
         - 📄 `CartFlyAnimation.tsx` (1.8 KB)
       - 📁 **cart/**
-        - 📄 `SlideCart.tsx` (5.3 KB)
+        - 📄 `SlideCart.tsx` (6.0 KB)
       - 📁 **layout/**
         - 📄 `Footer.tsx` (2.7 KB)
         - 📄 `MobileMenu.tsx` (2.3 KB)
         - 📄 `Navbar.tsx` (2.2 KB)
+      - 📁 **reviews/**
+        - 📄 `ProductReviews.tsx` (20.8 KB)
       - 📁 **ui/**
         - 📄 `FreeShippingBanner.tsx` (1.5 KB)
         - 📄 `PromoBadge.tsx` (598 bytes)
