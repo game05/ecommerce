@@ -354,41 +354,25 @@ export default function CommandePage() {
           <div>
             <h2 className="text-xl font-semibold mb-6">Récapitulatif de la commande</h2>
             <div className="space-y-4">
-              {items.map((item, index) => (
-                <div key={index} className="flex items-center space-x-4 border-b pb-4">
+              {items.map((item) => (
+                <div key={item.id} className="flex items-center space-x-4">
                   <div className="relative w-20 h-20">
                     <Image
                       src={item.image_url}
                       alt={item.name}
                       fill
-                      style={{ objectFit: 'cover' }}
-                      className="rounded"
+                      className="object-cover rounded-lg"
                     />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-medium">{item.name}</h3>
+                    <p className="text-sm text-gray-500">Quantité : {item.quantity}</p>
                     {item.customization && (
-                      <div className="text-sm text-gray-600 mt-1 space-y-1">
-                        <p>
-                          <span className="font-medium">Prénom :</span> {item.customization.prenom}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">Motif (+3€) :</span>
-                          <div className="relative w-6 h-6">
-                            <Image
-                              src={item.customization.motif}
-                              alt="Motif personnalisé"
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                        </div>
-                      </div>
+                      <p className="text-sm text-gray-500">
+                        Motif : {item.customization.motif ? 'Personnalisé' : 'Sans motif'}
+                      </p>
                     )}
-                    <div className="mt-1">
-                      <p className="text-sm text-gray-500">Quantité : {item.quantity}</p>
-                      <p className="text-sm font-medium">{(item.price * item.quantity).toFixed(2)}€</p>
-                    </div>
+                    <p className="text-sm font-medium">{(item.price * item.quantity).toFixed(2)}€</p>
                   </div>
                 </div>
               ))}
