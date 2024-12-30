@@ -94,15 +94,19 @@ export const SlideCart = ({ isOpen, onClose }: SlideCartProps) => {
                             <span className="font-medium">Prénom :</span> {item.customization.prenom}
                           </p>
                           <div className="flex items-center gap-2">
-                            <span className="font-medium">Motif (+3€) :</span>
-                            <div className="relative w-6 h-6">
-                              <Image
-                                src={item.customization.motif}
-                                alt="Motif personnalisé"
-                                fill
-                                className="object-contain"
-                              />
-                            </div>
+                            <span className="font-medium">Motif{item.customization.motif ? ' (+3€)' : ''} :</span>
+                            {item.customization.motif ? (
+                              <div className="relative w-6 h-6">
+                                <Image
+                                  src={item.customization.motif}
+                                  alt="Motif personnalisé"
+                                  fill
+                                  className="object-contain"
+                                />
+                              </div>
+                            ) : (
+                              <span>Sans motif</span>
+                            )}
                           </div>
                         </div>
                       )}
