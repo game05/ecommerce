@@ -8,6 +8,9 @@ import { createPayment } from '@/lib/payplug';
 import { searchPointsRelais } from '@/lib/mondialrelay';
 import dynamic from 'next/dynamic';
 import FreeShippingBanner from '@/components/ui/FreeShippingBanner';
+import { calculateShippingCost } from '@/lib/shipping';
+import type { ShippingItem } from '@/lib/shipping';
+import { supabase } from '@/lib/supabase';
 
 interface FormData {
   prenom: string;
@@ -45,6 +48,7 @@ export default function CommandePage() {
   const { items, clearCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
   const [pointsRelais, setPointsRelais] = useState<any[]>([]);
+  const [fraisLivraison, setFraisLivraison] = useState(0);
   const searchParams = useSearchParams();
 
   const [formData, setFormData] = useState<FormData>({
@@ -59,12 +63,10 @@ export default function CommandePage() {
 
   // Constants pour les seuils de livraison
   const SEUIL_LIVRAISON_GRATUITE = 50;
-  const FRAIS_LIVRAISON_STANDARD = 4.99;
   const ADRESSE_BOUTIQUE = "123 rue de la Boutique, 75000 Paris";
   const HORAIRES_BOUTIQUE = "Du lundi au samedi de 10h à 19h";
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const fraisLivraison = formData.livraisonMethod === 'retrait' ? 0 : (total >= SEUIL_LIVRAISON_GRATUITE ? 0 : FRAIS_LIVRAISON_STANDARD);
   const montantRestantLivraisonGratuite = Math.max(0, SEUIL_LIVRAISON_GRATUITE - total);
 
   // Charger les points relais quand le code postal change
@@ -75,6 +77,48 @@ export default function CommandePage() {
       });
     }
   }, [formData.codePostal, formData.livraisonMethod]);
+
+  // Mettre à jour les frais de livraison quand la méthode change
+  useEffect(() => {
+    const updateShippingCost = async () => {
+      if (total >= SEUIL_LIVRAISON_GRATUITE) {
+        setFraisLivraison(0);
+        return;
+      }
+
+      try {
+        // Récupérer les poids des produits depuis Supabase
+        const productIds = items.map(item => item.id);
+        
+        const { data: productsData, error } = await supabase
+          .from('products')
+          .select('id, weight')
+          .in('id', productIds);
+          
+        if (error) {
+          console.error('Erreur lors de la récupération des poids:', error);
+          return;
+        }
+        
+        const shippingItems: ShippingItem[] = items.map(item => {
+          const productData = productsData?.find(p => p.id === item.id);
+          return {
+            id: item.id,
+            quantity: item.quantity,
+            weight: productData?.weight || 0
+          };
+        });
+        
+        const cost = await calculateShippingCost(shippingItems, formData.livraisonMethod);
+        setFraisLivraison(cost);
+      } catch (error) {
+        console.error('Erreur lors du calcul des frais de livraison:', error);
+        setFraisLivraison(0);
+      }
+    };
+    
+    updateShippingCost();
+  }, [items, formData.livraisonMethod, total, SEUIL_LIVRAISON_GRATUITE]);
 
   // Vérifier si le paiement a été annulé
   const canceled = searchParams.get('canceled');
