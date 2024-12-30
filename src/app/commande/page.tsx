@@ -264,7 +264,7 @@ export default function CommandePage() {
                 Mode de livraison
               </label>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div
                   className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
                     formData.livraisonMethod === 'colissimo'
@@ -312,7 +312,7 @@ export default function CommandePage() {
                 </div>
 
                 <div
-                  className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-all md:col-span-2 ${
                     formData.livraisonMethod === 'retrait'
                       ? 'border-primary ring-2 ring-primary bg-primary/5'
                       : 'border-gray-200 hover:border-primary/50'
@@ -338,23 +338,42 @@ export default function CommandePage() {
 
             {/* Informations de retrait en boutique */}
             {formData.livraisonMethod === 'retrait' && (
-              <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-medium mb-2">Informations de retrait</h3>
-                <div className="space-y-2">
-                  <p className="text-gray-600">
-                    <span className="font-medium">Adresse : </span>
-                    {ADRESSE_BOUTIQUE}
-                  </p>
-                  <p className="text-gray-600">
-                    <span className="font-medium">Horaires : </span>
-                    {HORAIRES_BOUTIQUE}
-                  </p>
-                  <p className="text-sm text-gray-500 mt-2">
+              <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                <h3 className="text-lg font-medium mb-4">Sélectionnez le point de retrait</h3>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium">La Chabroderie</h4>
+                        <p className="text-sm text-gray-600">{ADRESSE_BOUTIQUE}</p>
+                        <p className="text-sm text-gray-600 mt-1">
+                          <span className="font-medium">Horaires : </span>
+                          {HORAIRES_BOUTIQUE}
+                        </p>
+                      </div>
+                      <span className="text-rose-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-4">
                     Vous recevrez un email lorsque votre commande sera prête à être retirée.
                   </p>
                 </div>
               </div>
             )}
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
+                isLoading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              {isLoading ? 'Chargement...' : 'Procéder au paiement'}
+            </button>
           </form>
         </div>
 
