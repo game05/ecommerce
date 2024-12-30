@@ -81,12 +81,27 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
     async function getProductRating() {
       if (product) {
         try {
-          const { data } = await supabase.rpc('get_product_rating', {
-            product_id_param: product.id
-          });
-          if (data && data[0]) {
-            setAverageRating(data[0].average_rating || 0);
-            setTotalReviews(data[0].total_reviews || 0);
+          // Calculer la moyenne directement à partir des avis
+          const { data: reviewsData, error: reviewsError } = await supabase
+            .from('avis')
+            .select('rating')
+            .eq('product_id', product.id);
+
+          if (reviewsError) {
+            console.error('Erreur lors de la récupération des avis:', reviewsError);
+            return;
+          }
+
+          if (reviewsData && reviewsData.length > 0) {
+            const totalReviews = reviewsData.length;
+            const sum = reviewsData.reduce((acc, review) => acc + review.rating, 0);
+            const average = Math.round((sum / totalReviews) * 10) / 10;
+
+            setAverageRating(average);
+            setTotalReviews(totalReviews);
+          } else {
+            setAverageRating(0);
+            setTotalReviews(0);
           }
         } catch (error) {
           console.error('Erreur lors de la récupération des avis:', error);

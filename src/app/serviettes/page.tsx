@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Bath, Heart, Sparkles, Ruler } from 'lucide-react';
+import { Bath, Heart, Sparkles, Ruler, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useEffect, useState } from 'react';
 import Loading from '@/components/loading';
@@ -16,6 +16,8 @@ type Product = {
   image_url: string;
   stock: number;
   size?: 'small' | 'medium' | 'large'; // 50x100, 70x140, 100x150
+  average_rating?: number;
+  total_reviews?: number;
 };
 
 // Types de tailles disponibles
@@ -54,14 +56,39 @@ export default function ServiettesPage() {
   useEffect(() => {
     async function getProducts() {
       try {
-        const { data, error } = await supabase
+        // Récupérer les produits
+        const { data: productsData, error: productsError } = await supabase
           .from('products')
           .select('id, name, description, price, image_url, stock, size')
           .eq('category', 'Serviettes')
           .order('id');
 
-        if (error) throw error;
-        setServiettes(data || []);
+        if (productsError) throw productsError;
+
+        // Récupérer les notes moyennes pour chaque produit
+        const productsWithRatings = await Promise.all((productsData || []).map(async (product) => {
+          const { data: reviewsData } = await supabase
+            .from('avis')
+            .select('rating')
+            .eq('product_id', product.id);
+
+          let average_rating = 0;
+          let total_reviews = 0;
+
+          if (reviewsData && reviewsData.length > 0) {
+            total_reviews = reviewsData.length;
+            const sum = reviewsData.reduce((acc, review) => acc + review.rating, 0);
+            average_rating = Math.round((sum / total_reviews) * 10) / 10;
+          }
+
+          return {
+            ...product,
+            average_rating,
+            total_reviews
+          };
+        }));
+
+        setServiettes(productsWithRatings);
       } catch (error) {
         console.error('Erreur lors de la récupération des produits:', error);
       } finally {
@@ -173,10 +200,33 @@ export default function ServiettesPage() {
                   loading="eager"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-pink-500 transition-colors">
+              <div className="flex flex-col flex-1 p-4">
+                <h3 className="text-lg font-medium text-gray-900 group-hover:text-pink-500 transition-colors">
                   {serviette.name}
                 </h3>
+
+                {(serviette.total_reviews !== undefined && serviette.total_reviews > 0) && (
+                  <div className="flex items-center gap-2 mt-1 mb-2">
+                    <div className="flex items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`w-4 h-4 ${
+                            star <= (serviette.average_rating || 0)
+                              ? 'text-yellow-400 fill-yellow-400'
+                              : 'text-gray-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <Link 
+                      href={`/produit/${serviette.id}#reviews`}
+                      className="text-sm text-gray-600 hover:text-gray-800 hover:underline"
+                    >
+                      {serviette.total_reviews} avis
+                    </Link>
+                  </div>
+                )}
                 {sizeInfo && (
                   <div className="mb-2 flex items-center space-x-2">
                     <span className="text-2xl">{sizeInfo.icon}</span>
@@ -186,8 +236,8 @@ export default function ServiettesPage() {
                 <p className="text-gray-600 mb-4 line-clamp-2">
                   {serviette.description}
                 </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-pink-500 font-semibold">
+                <div className="flex items-center justify-between mt-auto">
+                  <span className="text-lg font-semibold text-pink-500">
                     {serviette.price.toFixed(2)}€
                   </span>
                   <span className="inline-flex items-center bg-pink-500 text-white px-4 py-2 rounded-full group-hover:bg-pink-600 transition-colors">

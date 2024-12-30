@@ -8,12 +8,12 @@
       "children": [
         {
           "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\doc\\project_structure.json",
-          "size": 17036,
+          "size": 17481,
           "is_file": true
         },
         {
           "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\doc\\project_structure.md",
-          "size": 2994,
+          "size": 3068,
           "is_file": true
         },
         {
@@ -36,7 +36,7 @@
     },
     {
       "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\next.config.js",
-      "size": 362,
+      "size": 249,
       "is_file": true
     },
     {
@@ -277,7 +277,7 @@
                     },
                     {
                       "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\produit\\[slug]\\page.tsx",
-                      "size": 13127,
+                      "size": 13675,
                       "is_file": true
                     }
                   ]
@@ -295,7 +295,7 @@
                 },
                 {
                   "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\serviettes\\page.tsx",
-                  "size": 9252,
+                  "size": 11229,
                   "is_file": true
                 }
               ]
@@ -365,7 +365,7 @@
               "children": [
                 {
                   "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\reviews\\ProductReviews.tsx",
-                  "size": 21268,
+                  "size": 9087,
                   "is_file": true
                 }
               ]

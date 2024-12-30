@@ -6,8 +6,8 @@
   - 📁 **doc/**
     - 📁 **scripts/**
       - 📄 `analyze_project.py` (2.9 KB)
-    - 📄 `project_structure.json` (16.6 KB)
-    - 📄 `project_structure.md` (2.9 KB)
+    - 📄 `project_structure.json` (17.1 KB)
+    - 📄 `project_structure.md` (3.0 KB)
   - 📁 **public/**
     - 📁 **images/**
       - 📄 `empty-cart-cat.png` (53.6 KB)
@@ -45,10 +45,10 @@
       - 📁 **produit/**
         - 📁 **[slug]/**
           - 📄 `loading.tsx` (69 bytes)
-          - 📄 `page.tsx` (12.8 KB)
+          - 📄 `page.tsx` (13.4 KB)
       - 📁 **serviettes/**
         - 📄 `loading.tsx` (69 bytes)
-        - 📄 `page.tsx` (9.0 KB)
+        - 📄 `page.tsx` (11.0 KB)
       - 📄 `globals.css` (1.5 KB)
       - 📄 `layout.tsx` (1.0 KB)
       - 📄 `not-found.tsx` (1.6 KB)
@@ -63,7 +63,7 @@
         - 📄 `MobileMenu.tsx` (2.3 KB)
         - 📄 `Navbar.tsx` (2.2 KB)
       - 📁 **reviews/**
-        - 📄 `ProductReviews.tsx` (20.8 KB)
+        - 📄 `ProductReviews.tsx` (8.9 KB)
       - 📁 **ui/**
         - 📄 `FreeShippingBanner.tsx` (1.5 KB)
         - 📄 `PromoBadge.tsx` (598 bytes)
@@ -82,7 +82,7 @@
       - 📄 `global.d.ts` (46 bytes)
   - 📄 `README.md` (556 bytes)
   - 📄 `next-env.d.ts` (206 bytes)
-  - 📄 `next.config.js` (362 bytes)
+  - 📄 `next.config.js` (249 bytes)
   - 📄 `package-lock.json` (214.9 KB)
   - 📄 `package.json` (957 bytes)
   - 📄 `postcss.config.js` (82 bytes)
