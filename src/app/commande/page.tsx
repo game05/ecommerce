@@ -16,7 +16,7 @@ interface FormData {
   adresse: string;
   codePostal: string;
   ville: string;
-  livraisonMethod: 'colissimo' | 'mondialrelay';
+  livraisonMethod: 'colissimo' | 'mondialrelay' | 'retrait';
   pointRelais?: {
     id: string;
     nom: string;
@@ -60,9 +60,11 @@ export default function CommandePage() {
   // Constants pour les seuils de livraison
   const SEUIL_LIVRAISON_GRATUITE = 50;
   const FRAIS_LIVRAISON_STANDARD = 4.99;
+  const ADRESSE_BOUTIQUE = "123 rue de la Boutique, 75000 Paris";
+  const HORAIRES_BOUTIQUE = "Du lundi au samedi de 10h à 19h";
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const fraisLivraison = total >= SEUIL_LIVRAISON_GRATUITE ? 0 : FRAIS_LIVRAISON_STANDARD;
+  const fraisLivraison = formData.livraisonMethod === 'retrait' ? 0 : (total >= SEUIL_LIVRAISON_GRATUITE ? 0 : FRAIS_LIVRAISON_STANDARD);
   const montantRestantLivraisonGratuite = Math.max(0, SEUIL_LIVRAISON_GRATUITE - total);
 
   // Charger les points relais quand le code postal change
@@ -262,7 +264,7 @@ export default function CommandePage() {
                 Mode de livraison
               </label>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div
                   className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
                     formData.livraisonMethod === 'colissimo'
@@ -308,18 +310,51 @@ export default function CommandePage() {
                     </div>
                   </div>
                 </div>
+
+                <div
+                  className={`relative border rounded-lg p-4 cursor-pointer transition-all ${
+                    formData.livraisonMethod === 'retrait'
+                      ? 'border-primary ring-2 ring-primary bg-primary/5'
+                      : 'border-gray-200 hover:border-primary/50'
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, livraisonMethod: 'retrait' }))}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      formData.livraisonMethod === 'retrait' ? 'border-primary' : 'border-gray-300'
+                    }`}>
+                      {formData.livraisonMethod === 'retrait' && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium">Retrait boutique</p>
+                      <p className="text-sm text-gray-500">Gratuit</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
-                isLoading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              {isLoading ? 'Chargement...' : 'Procéder au paiement'}
-            </button>
+            {/* Informations de retrait en boutique */}
+            {formData.livraisonMethod === 'retrait' && (
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-medium mb-2">Informations de retrait</h3>
+                <div className="space-y-2">
+                  <p className="text-gray-600">
+                    <span className="font-medium">Adresse : </span>
+                    {ADRESSE_BOUTIQUE}
+                  </p>
+                  <p className="text-gray-600">
+                    <span className="font-medium">Horaires : </span>
+                    {HORAIRES_BOUTIQUE}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Vous recevrez un email lorsque votre commande sera prête à être retirée.
+                  </p>
+                </div>
+              </div>
+            )}
           </form>
         </div>
 
@@ -375,7 +410,13 @@ export default function CommandePage() {
                 </div>
                 <div className="flex justify-between">
                   <span>Frais de livraison</span>
-                  <span>{fraisLivraison === 0 ? 'Gratuit' : `${fraisLivraison.toFixed(2)}€`}</span>
+                  <span>
+                    {formData.livraisonMethod === 'retrait' 
+                      ? 'Gratuit (Retrait en boutique)' 
+                      : fraisLivraison === 0 
+                        ? 'Gratuit' 
+                        : `${fraisLivraison.toFixed(2)}€`}
+                  </span>
                 </div>
                 {montantRestantLivraisonGratuite > 0 && (
                   <div className="my-2 bg-white shadow rounded-lg">
