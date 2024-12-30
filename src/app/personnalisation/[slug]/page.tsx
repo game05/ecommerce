@@ -32,7 +32,8 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
   const { addToCart, openCart } = useCart();
   const [formData, setFormData] = useState({
     prenom: '',
-    motifSelectionne: ''
+    motifSelectionne: '',
+    wantMotif: false
   });
 
   useEffect(() => {
@@ -102,7 +103,7 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
       alert('Veuillez entrer un prénom');
       return;
     }
-    if (currentStep === 2 && !formData.motifSelectionne) {
+    if (currentStep === 2 && formData.wantMotif && !formData.motifSelectionne) {
       alert('Veuillez sélectionner un motif');
       return;
     }
@@ -221,37 +222,82 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
               ) : currentStep === 2 ? (
                 /* Étape 2 : Motifs */
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-medium text-gray-900">Choisissez un motif</h3>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-pink-100 text-pink-800">
-                      +3€
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-500">
-                    Ajoutez une touche unique à votre article avec un joli motif
-                  </p>
-                  <div className="mt-2 grid grid-cols-3 gap-2">
-                    {motifs.map((motif, index) => (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Souhaitez-vous ajouter un motif ?</h3>
+                    <p className="text-sm text-gray-500 mb-4">
+                      L'ajout d'un motif est optionnel et coûte 3€ supplémentaires
+                    </p>
+                    <div className="flex gap-4">
                       <button
-                        key={index}
-                        onClick={() => handleMotifSelect(motif)}
-                        className={`relative aspect-square rounded-lg border overflow-hidden p-1.5 ${
-                          formData.motifSelectionne === motif
-                            ? 'border-pink-500 ring-2 ring-pink-500'
-                            : 'border-gray-200 hover:border-pink-300'
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            wantMotif: true,
+                            motifSelectionne: ''
+                          }));
+                        }}
+                        className={`flex-1 py-3 px-4 rounded-lg border ${
+                          formData.wantMotif
+                            ? 'border-pink-500 bg-pink-50 text-pink-700'
+                            : 'border-gray-300 hover:border-pink-300'
                         }`}
                       >
-                        <div className="relative w-20 h-20 mx-auto">
-                          <Image
-                            src={motif}
-                            alt={`Motif ${index + 1}`}
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
+                        Oui, je veux un motif
                       </button>
-                    ))}
+                      <button
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            wantMotif: false,
+                            motifSelectionne: ''
+                          }));
+                        }}
+                        className={`flex-1 py-3 px-4 rounded-lg border ${
+                          formData.wantMotif === false
+                            ? 'border-pink-500 bg-pink-50 text-pink-700'
+                            : 'border-gray-300 hover:border-pink-300'
+                        }`}
+                      >
+                        Non, sans motif
+                      </button>
+                    </div>
                   </div>
+                  
+                  {formData.wantMotif && (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-lg font-medium text-gray-900">Choisissez un motif</h3>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-pink-100 text-pink-800">
+                          +3€
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        Ajoutez une touche unique à votre article avec un joli motif
+                      </p>
+                      <div className="mt-2 grid grid-cols-3 gap-2">
+                        {motifs.map((motif, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleMotifSelect(motif)}
+                            className={`relative aspect-square rounded-lg border overflow-hidden p-1.5 ${
+                              formData.motifSelectionne === motif
+                                ? 'border-pink-500 ring-2 ring-pink-500'
+                                : 'border-gray-200 hover:border-pink-300'
+                            }`}
+                          >
+                            <div className="relative w-20 h-20 mx-auto">
+                              <Image
+                                src={motif}
+                                alt={`Motif ${index + 1}`}
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               ) : (
                 /* Étape 3 : Récapitulatif */
@@ -272,15 +318,19 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-gray-200">
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Motif (+3€)</p>
-                        <div className="w-16 h-16 relative mt-1">
-                          <Image
-                            src={formData.motifSelectionne}
-                            alt="Motif sélectionné"
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
+                        <p className="text-sm font-medium text-gray-500">Motif {formData.wantMotif ? '(+3€)' : ''}</p>
+                        {formData.wantMotif ? (
+                          <div className="w-16 h-16 relative mt-1">
+                            <Image
+                              src={formData.motifSelectionne}
+                              alt="Motif sélectionné"
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                        ) : (
+                          <p className="text-base font-medium text-gray-900">Sans motif</p>
+                        )}
                       </div>
                       <button 
                         onClick={() => setCurrentStep(2)}
@@ -293,7 +343,7 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                       <div className="flex justify-between">
                         <p className="text-base font-medium text-gray-900">Prix total</p>
                         <p className="text-base font-medium text-gray-900">
-                          {product ? `${(product.price + (formData.motifSelectionne ? MOTIF_PRICE : 0)).toFixed(2)}€` : ''}
+                          {product ? `${(product.price + (formData.wantMotif && formData.motifSelectionne ? MOTIF_PRICE : 0)).toFixed(2)}€` : ''}
                         </p>
                       </div>
                     </div>
@@ -325,7 +375,7 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                         addToCart({
                           id: product.id,
                           name: product.name,
-                          price: product.price + (formData.motifSelectionne ? MOTIF_PRICE : 0),
+                          price: product.price + (formData.wantMotif && formData.motifSelectionne ? MOTIF_PRICE : 0),
                           image_url: product.image_url,
                           quantity: 1,
                           customization: {

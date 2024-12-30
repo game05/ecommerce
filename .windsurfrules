@@ -24,7 +24,8 @@ sur certain fichier page, ne change jamais le desin existant, sans que je te le 
 quand il faut chercher un fichier il faut chercher le bon fichier.
 vérifie bien que il existe deja.
 
-Quand on fera des modification sur les fichier, tu devras regarder
+Quand on fera des modification sur les fichier et quand
+on analysera les fichier, tu devras regarder
 que le fichier est deja present en regardant la ducumentation de ce fichier :
 "C:\Users\prive\Desktop\lachabroderie.fr\site\doc\project_structure.md".
 une fois trouver tu analysera le code en entier pour pouvoir apporter
