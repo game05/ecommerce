@@ -336,43 +336,6 @@ export default function CommandePage() {
               </div>
             </div>
 
-            {/* Informations de retrait en boutique */}
-            {formData.livraisonMethod === 'retrait' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Carte ou image de la boutique */}
-                <div className="bg-gray-100 rounded-lg h-[400px] flex items-center justify-center">
-                  <p className="text-gray-500">Carte de la boutique</p>
-                </div>
-
-                {/* Informations de la boutique */}
-                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-                  <h3 className="text-lg font-medium mb-4">Point de retrait sélectionné</h3>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium">La Chabroderie</h4>
-                          <p className="text-sm text-gray-600">{ADRESSE_BOUTIQUE}</p>
-                          <p className="text-sm text-gray-600 mt-2">
-                            <span className="font-medium">Horaires : </span>
-                            {HORAIRES_BOUTIQUE}
-                          </p>
-                          <p className="text-sm text-gray-500 mt-4">
-                            Vous recevrez un email lorsque votre commande sera prête à être retirée.
-                          </p>
-                        </div>
-                        <span className="text-rose-600">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={isLoading}
@@ -455,6 +418,35 @@ export default function CommandePage() {
                   <span>{(total + fraisLivraison).toFixed(2)}€</span>
                 </div>
               </div>
+
+              {/* Informations de retrait en boutique */}
+              {formData.livraisonMethod === 'retrait' && (
+                <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                  <h3 className="text-lg font-medium mb-4">Point de retrait sélectionné</h3>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium">La Chabroderie</h4>
+                          <p className="text-sm text-gray-600">{ADRESSE_BOUTIQUE}</p>
+                          <p className="text-sm text-gray-600 mt-2">
+                            <span className="font-medium">Horaires : </span>
+                            {HORAIRES_BOUTIQUE}
+                          </p>
+                          <p className="text-sm text-gray-500 mt-4">
+                            Vous recevrez un email lorsque votre commande sera prête à être retirée.
+                          </p>
+                        </div>
+                        <span className="text-rose-600">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
