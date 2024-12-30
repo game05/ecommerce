@@ -132,7 +132,7 @@ export const SlideCart = ({ isOpen, onClose }: SlideCartProps) => {
                       </p>
                     </div>
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.id, item.customization)}
                       className="text-gray-400 hover:text-red-500 transition"
                     >
                       <Trash2 className="w-5 h-5" />

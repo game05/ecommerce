@@ -16,7 +16,7 @@ interface CartStore {
   items: CartItem[];
   isOpen: boolean;
   addToCart: (item: CartItem) => void;
-  removeFromCart: (itemId: number) => void;
+  removeFromCart: (itemId: number, customization?: any) => void;
   updateQuantity: (itemId: number, quantity: number) => void;
   clearCart: () => void;
   openCart: () => void;
@@ -49,9 +49,16 @@ export const useCart = create<CartStore>()(
             items: [...state.items, item],
           };
         }),
-      removeFromCart: (itemId) =>
+      removeFromCart: (itemId, customization) =>
         set((state) => ({
-          items: state.items.filter((i) => i.id !== itemId),
+          items: state.items.filter((i) => {
+            if (customization) {
+              // Si une personnalisation est spécifiée, on compare l'ID et la personnalisation
+              return !(i.id === itemId && JSON.stringify(i.customization) === JSON.stringify(customization));
+            }
+            // Si pas de personnalisation spécifiée, on ne compare que l'ID
+            return i.id !== itemId;
+          }),
         })),
       updateQuantity: (itemId, quantity) =>
         set((state) => ({
