@@ -160,7 +160,7 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
 
             {/* Indicateur d'étapes en dessous du titre */}
             <div className="mb-8">
-              <div className="flex items-center gap-6">
+              <div className="hidden md:flex items-center gap-6">
                 <div className={`flex items-center ${currentStep >= 1 ? 'text-pink-600' : 'text-gray-400'}`}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
                     currentStep >= 1 ? 'border-pink-600 bg-pink-50' : 'border-gray-300'
@@ -190,6 +190,52 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                     3
                   </div>
                   <span className="ml-3 text-sm font-medium">Récapitulatif</span>
+                </div>
+              </div>
+
+              {/* Version mobile des étapes */}
+              <div className="flex md:hidden justify-between px-4">
+                <div className="flex flex-col items-center">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                    currentStep >= 1 ? 'border-pink-600 bg-pink-50 text-pink-600' : 'border-gray-300 text-gray-400'
+                  }`}>
+                    1
+                  </div>
+                  <span className={`mt-1 text-xs font-medium ${
+                    currentStep >= 1 ? 'text-pink-600' : 'text-gray-400'
+                  }`}>Prénom</span>
+                </div>
+
+                <div className="flex flex-col items-center relative">
+                  <div className="absolute top-4 -left-[calc(50%+1rem)] w-[calc(100%+2rem)] h-0.5 bg-gray-200">
+                    <div className={`h-full bg-pink-600 transition-all duration-300 ${
+                      currentStep >= 2 ? 'w-full' : 'w-0'
+                    }`}></div>
+                  </div>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                    currentStep >= 2 ? 'border-pink-600 bg-pink-50 text-pink-600' : 'border-gray-300 text-gray-400'
+                  }`}>
+                    2
+                  </div>
+                  <span className={`mt-1 text-xs font-medium ${
+                    currentStep >= 2 ? 'text-pink-600' : 'text-gray-400'
+                  }`}>Motif</span>
+                </div>
+
+                <div className="flex flex-col items-center relative">
+                  <div className="absolute top-4 -left-[calc(50%+1rem)] w-[calc(100%+2rem)] h-0.5 bg-gray-200">
+                    <div className={`h-full bg-pink-600 transition-all duration-300 ${
+                      currentStep >= 3 ? 'w-full' : 'w-0'
+                    }`}></div>
+                  </div>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                    currentStep >= 3 ? 'border-pink-600 bg-pink-50 text-pink-600' : 'border-gray-300 text-gray-400'
+                  }`}>
+                    3
+                  </div>
+                  <span className={`mt-1 text-xs font-medium ${
+                    currentStep >= 3 ? 'text-pink-600' : 'text-gray-400'
+                  }`}>Récap</span>
                 </div>
               </div>
             </div>
