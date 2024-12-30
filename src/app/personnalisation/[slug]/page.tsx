@@ -194,9 +194,17 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
               </div>
 
               {/* Version mobile des étapes */}
-              <div className="flex md:hidden justify-between px-4">
-                <div className="flex flex-col items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+              <div className="flex md:hidden justify-between px-4 relative">
+                {/* Barres de progression en arrière-plan */}
+                <div className="absolute top-4 left-[calc(25%-1rem)] right-[calc(25%-1rem)] h-0.5 bg-gray-200">
+                  <div className={`h-full bg-pink-600 transition-all duration-300 ${
+                    currentStep >= 2 ? currentStep >= 3 ? 'w-full' : 'w-1/2' : 'w-0'
+                  }`}></div>
+                </div>
+
+                {/* Étapes */}
+                <div className="flex flex-col items-center z-10">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white ${
                     currentStep >= 1 ? 'border-pink-600 bg-pink-50 text-pink-600' : 'border-gray-300 text-gray-400'
                   }`}>
                     1
@@ -206,13 +214,8 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                   }`}>Prénom</span>
                 </div>
 
-                <div className="flex flex-col items-center relative">
-                  <div className="absolute top-4 -left-[calc(50%+1rem)] w-[calc(100%+2rem)] h-0.5 bg-gray-200">
-                    <div className={`h-full bg-pink-600 transition-all duration-300 ${
-                      currentStep >= 2 ? 'w-full' : 'w-0'
-                    }`}></div>
-                  </div>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                <div className="flex flex-col items-center z-10">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white ${
                     currentStep >= 2 ? 'border-pink-600 bg-pink-50 text-pink-600' : 'border-gray-300 text-gray-400'
                   }`}>
                     2
@@ -222,13 +225,8 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                   }`}>Motif</span>
                 </div>
 
-                <div className="flex flex-col items-center relative">
-                  <div className="absolute top-4 -left-[calc(50%+1rem)] w-[calc(100%+2rem)] h-0.5 bg-gray-200">
-                    <div className={`h-full bg-pink-600 transition-all duration-300 ${
-                      currentStep >= 3 ? 'w-full' : 'w-0'
-                    }`}></div>
-                  </div>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                <div className="flex flex-col items-center z-10">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white ${
                     currentStep >= 3 ? 'border-pink-600 bg-pink-50 text-pink-600' : 'border-gray-300 text-gray-400'
                   }`}>
                     3
