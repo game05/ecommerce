@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       notification_url: `${baseUrl}/api/payment/webhook`,
       hosted_payment: {
         return_url: `${baseUrl}/commande/confirmation?success=true&token=${confirmationToken}`,
-        cancel_url: `${baseUrl}/commande?canceled=true`,
+        cancel_url: `${baseUrl}/commande/annulation`,
       },
       customer: {
         email: customer.email,
