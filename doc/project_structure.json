@@ -8,12 +8,12 @@
       "children": [
         {
           "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\doc\\project_structure.json",
-          "size": 17481,
+          "size": 17670,
           "is_file": true
         },
         {
           "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\doc\\project_structure.md",
-          "size": 3068,
+          "size": 3108,
           "is_file": true
         },
         {
@@ -36,7 +36,7 @@
     },
     {
       "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\next.config.js",
-      "size": 249,
+      "size": 261,
       "is_file": true
     },
     {
@@ -255,7 +255,7 @@
                     },
                     {
                       "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\personnalisation\\[slug]\\page.tsx",
-                      "size": 18376,
+                      "size": 34779,
                       "is_file": true
                     }
                   ]
@@ -277,7 +277,7 @@
                     },
                     {
                       "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\produit\\[slug]\\page.tsx",
-                      "size": 13675,
+                      "size": 15732,
                       "is_file": true
                     }
                   ]

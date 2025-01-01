@@ -430,6 +430,16 @@ export default function CommandePage() {
                             <span>Sans motif</span>
                           )}
                         </div>
+                        <p>
+                          <span className="font-medium">Couleur broderie :</span>{' '}
+                          {item.customization.broderingColor === 'white' ? 'Blanc' :
+                           item.customization.broderingColor === 'black' ? 'Noir' :
+                           item.customization.broderingColor === 'navy' ? 'Bleu Marine' :
+                           item.customization.broderingColor === 'pink' ? 'Rose' :
+                           item.customization.broderingColor === 'red' ? 'Rouge' :
+                           item.customization.broderingColor === 'gold' ? 'Or' :
+                           item.customization.broderingColor === 'silver' ? 'Argent' : 'Blanc'}
+                        </p>
                       </div>
                     )}
                     <div className="mt-1">

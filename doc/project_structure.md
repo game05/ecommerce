@@ -6,7 +6,7 @@
   - 📁 **doc/**
     - 📁 **scripts/**
       - 📄 `analyze_project.py` (2.9 KB)
-    - 📄 `project_structure.json` (17.1 KB)
+    - 📄 `project_structure.json` (17.3 KB)
     - 📄 `project_structure.md` (3.0 KB)
   - 📁 **public/**
     - 📁 **images/**
@@ -41,11 +41,11 @@
       - 📁 **personnalisation/**
         - 📁 **[slug]/**
           - 📄 `loading.tsx` (69 bytes)
-          - 📄 `page.tsx` (17.9 KB)
+          - 📄 `page.tsx` (34.0 KB)
       - 📁 **produit/**
         - 📁 **[slug]/**
           - 📄 `loading.tsx` (69 bytes)
-          - 📄 `page.tsx` (13.4 KB)
+          - 📄 `page.tsx` (15.4 KB)
       - 📁 **serviettes/**
         - 📄 `loading.tsx` (69 bytes)
         - 📄 `page.tsx` (11.0 KB)
@@ -83,7 +83,7 @@
       - 📄 `global.d.ts` (46 bytes)
   - 📄 `README.md` (556 bytes)
   - 📄 `next-env.d.ts` (206 bytes)
-  - 📄 `next.config.js` (249 bytes)
+  - 📄 `next.config.js` (261 bytes)
   - 📄 `package-lock.json` (214.9 KB)
   - 📄 `package.json` (957 bytes)
   - 📄 `postcss.config.js` (82 bytes)

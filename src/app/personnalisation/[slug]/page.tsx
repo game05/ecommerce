@@ -14,12 +14,36 @@ type Product = {
   image_url: string;
 };
 
+type PersonnalisationSettings = {
+  id: string;
+  product_id: number;
+  text_position_x: number;
+  text_position_y: number;
+  text_size: number;
+  motif_position_x: number;
+  motif_position_y: number;
+  motif_size: number;
+  can_move_text: boolean;
+  can_move_motif: boolean;
+};
+
 // Liste des motifs disponibles
 const motifs = [
   '/motif/motif1.png',
   '/motif/motif2.png',
   '/motif/motif3.png',
   '/motif/motif4.png'
+];
+
+// Liste des couleurs de broderie disponibles
+const broderingColors = [
+  { id: 'white', name: 'Blanc', hex: '#FFFFFF', border: true },
+  { id: 'black', name: 'Noir', hex: '#000000' },
+  { id: 'navy', name: 'Bleu Marine', hex: '#000080' },
+  { id: 'pink', name: 'Rose', hex: '#FF69B4' },
+  { id: 'red', name: 'Rouge', hex: '#FF0000' },
+  { id: 'gold', name: 'Or', hex: '#FFD700' },
+  { id: 'silver', name: 'Argent', hex: '#C0C0C0', border: true }
 ];
 
 // Prix du motif
@@ -30,11 +54,89 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const { addToCart, openCart } = useCart();
+  const [personnalisation, setPersonnalisation] = useState<PersonnalisationSettings | null>(null);
   const [formData, setFormData] = useState({
     prenom: '',
+    broderingColor: 'white',
     motifSelectionne: '',
-    wantMotif: false
+    wantMotif: false,
+    textPosition: { x: 50, y: 50 },
+    textSize: 3,
+    motifPosition: { x: 50, y: 50 },
+    motifSize: 3
   });
+  const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [startResizePosition, setStartResizePosition] = useState({ x: 0, y: 0 });
+  const [startSize, setStartSize] = useState(3);
+  const [draggedElement, setDraggedElement] = useState<'text' | 'motif' | null>(null);
+  const [resizedElement, setResizedElement] = useState<'text' | 'motif' | null>(null);
+
+  // Fonction pour vérifier si l'utilisateur est admin
+  const isAdmin = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return false;
+      
+      const { data: user } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      return user?.role === 'admin';
+    } catch (error) {
+      console.error('Erreur lors de la vérification du rôle:', error);
+      return false;
+    }
+  };
+
+  // Gestionnaires de drag pour le texte et le motif
+  const handleDragStart = (element: 'text' | 'motif') => async (e: React.MouseEvent<HTMLDivElement>) => {
+    // Vérifier si le déplacement est autorisé
+    if (element === 'text' && !personnalisation?.can_move_text) {
+      const admin = await isAdmin();
+      if (!admin) return;
+    }
+    if (element === 'motif' && !personnalisation?.can_move_motif) {
+      const admin = await isAdmin();
+      if (!admin) return;
+    }
+
+    setIsDragging(true);
+    setDraggedElement(element);
+    e.preventDefault();
+  };
+
+  // Gestionnaires de redimensionnement pour le texte et le motif
+  const handleResizeStart = (element: 'text' | 'motif') => async (e: React.MouseEvent<HTMLDivElement>) => {
+    // Vérifier si le redimensionnement est autorisé
+    if (element === 'text' && !personnalisation?.can_move_text) {
+      const admin = await isAdmin();
+      if (!admin) return;
+    }
+    if (element === 'motif' && !personnalisation?.can_move_motif) {
+      const admin = await isAdmin();
+      if (!admin) return;
+    }
+
+    setIsResizing(true);
+    setResizedElement(element);
+    setStartResizePosition({ x: e.clientX, y: e.clientY });
+    setStartSize(element === 'text' ? formData.textSize : formData.motifSize);
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    setDraggedElement(null);
+  };
+
+  const handleResizeEnd = () => {
+    setIsResizing(false);
+    setResizedElement(null);
+  };
 
   useEffect(() => {
     async function getProduct() {
@@ -42,15 +144,49 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
         const decodedSlug = decodeURIComponent(params.slug);
         const productName = decodedSlug.replace(/-/g, ' ');
         
-        const { data, error } = await supabase
+        const { data: productData, error: productError } = await supabase
           .from('products')
           .select('*')
           .ilike('name', productName)
           .single();
 
-        if (error) throw error;
-        if (!data) notFound();
-        setProduct(data);
+        if (productError) throw productError;
+        if (!productData) notFound();
+        
+        setProduct(productData);
+        console.log('Produit récupéré:', productData);
+
+        // Récupérer les paramètres de personnalisation
+        const { data: personnalisationData, error: personnalisationError } = await supabase
+          .from('personnalisation')
+          .select('*')
+          .eq('product_id', productData.id)
+          .single();
+
+        if (personnalisationError) {
+          console.error('Erreur lors de la récupération de la personnalisation:', personnalisationError);
+        }
+
+        if (personnalisationData) {
+          console.log('Personnalisation récupérée:', personnalisationData);
+          setPersonnalisation(personnalisationData);
+          // Mettre à jour formData avec les valeurs de personnalisation
+          setFormData(prev => ({
+            ...prev,
+            textPosition: { 
+              x: personnalisationData.text_position_x, 
+              y: personnalisationData.text_position_y 
+            },
+            textSize: personnalisationData.text_size,
+            motifPosition: { 
+              x: personnalisationData.motif_position_x, 
+              y: personnalisationData.motif_position_y 
+            },
+            motifSize: personnalisationData.motif_size
+          }));
+        } else {
+          console.log('Aucune personnalisation trouvée pour le produit:', productData.id);
+        }
       } catch (error) {
         console.error('Erreur lors de la récupération du produit:', error);
       } finally {
@@ -62,26 +198,51 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
   }, [params.slug]);
 
   useEffect(() => {
-    const updateCartIconPosition = () => {
-      const cartIcon = document.querySelector('.cart-icon');
-      if (cartIcon) {
-        const rect = cartIcon.getBoundingClientRect();
-        // setCartIconPosition({
-        //   x: rect.right - 20,
-        //   y: rect.top + rect.height / 2
-        // });
+    const handleMouseMove = async (e: MouseEvent) => {
+      if (isResizing && resizedElement) {
+        const deltaX = e.clientX - startResizePosition.x;
+        const scale = 0.01;
+        const newSize = Math.max(1, startSize + (deltaX * scale));
+        
+        setFormData(prev => ({
+          ...prev,
+          [resizedElement === 'text' ? 'textSize' : 'motifSize']: newSize
+        }));
+      } else if (isDragging && draggedElement) {
+        const container = document.querySelector('.product-image-container');
+        if (!container) return;
+
+        const rect = container.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+        const boundedX = Math.min(Math.max(x, 0), 100);
+        const boundedY = Math.min(Math.max(y, 0), 100);
+
+        setFormData(prev => ({
+          ...prev,
+          [draggedElement === 'text' ? 'textPosition' : 'motifPosition']: { x: boundedX, y: boundedY }
+        }));
       }
     };
 
-    updateCartIconPosition();
-    window.addEventListener('resize', updateCartIconPosition);
-    const interval = setInterval(updateCartIconPosition, 1000);
+    const handleMouseUp = () => {
+      if (isResizing) {
+        handleResizeEnd();
+      }
+      if (isDragging) {
+        handleDragEnd();
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
-      window.removeEventListener('resize', updateCartIconPosition);
-      clearInterval(interval);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, []);
+  }, [isDragging, isResizing, draggedElement, resizedElement, startResizePosition.x, startResizePosition.y, startSize]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -114,6 +275,25 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
     setCurrentStep(prev => prev - 1);
   };
 
+  const handleDrag = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging || !draggedElement) return;
+    
+    const container = e.currentTarget.parentElement;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    const boundedX = Math.min(Math.max(x, 0), 100);
+    const boundedY = Math.min(Math.max(y, 0), 100);
+
+    setFormData(prev => ({
+      ...prev,
+      [draggedElement === 'text' ? 'textPosition' : 'motifPosition']: { x: boundedX, y: boundedY }
+    }));
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -128,28 +308,139 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
     <main className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="lg:grid lg:grid-cols-2 lg:gap-8">
-          {/* Colonne de gauche - Image du produit */}
+          {/* Colonne de gauche - Image du produit et valeurs */}
           <div className="mb-8 lg:mb-0">
-            <div className="relative aspect-square overflow-hidden rounded-lg border border-gray-200">
-              <Image
-                src={product.image_url}
-                alt={product.name}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              {formData.motifSelectionne && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Image
-                    src={formData.motifSelectionne}
-                    alt="Motif sélectionné"
-                    width={100}
-                    height={100}
-                    className="object-contain"
-                  />
-                </div>
-              )}
+            <div className="relative aspect-square overflow-hidden rounded-lg border border-gray-200 mx-auto max-w-[95%] product-image-container mb-4">
+              <div className="absolute inset-0 p-4">
+                <Image
+                  src={product.image_url}
+                  alt={product.name}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+                {/* Prénom brodé */}
+                {formData.prenom && (
+                  <div 
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{
+                      transform: `translate(${formData.textPosition.x - 50}%, ${formData.textPosition.y - 50}%)`
+                    }}
+                  >
+                    <div className="relative group">
+                      <div 
+                        className={`font-serif font-medium tracking-wide transform -rotate-6 select-none ${
+                          isDragging && draggedElement === 'text' ? 'cursor-grabbing' : 'cursor-grab'
+                        }`}
+                        style={{ 
+                          color: broderingColors.find(c => c.id === formData.broderingColor)?.hex || '#000000',
+                          textShadow: formData.broderingColor === 'white' ? '0 0 1px #000' : 'none',
+                          pointerEvents: 'auto',
+                          fontSize: `${formData.textSize}rem`
+                        }}
+                        onMouseDown={handleDragStart('text')}
+                      >
+                        {formData.prenom}
+                      </div>
+
+                      {/* Poignée de redimensionnement du texte */}
+                      <div
+                        className={`absolute -right-3 -bottom-3 w-6 h-6 bg-white border-2 border-pink-500 rounded-full 
+                          flex items-center justify-center cursor-se-resize opacity-0 group-hover:opacity-100 
+                          transition-opacity duration-200 ${isResizing && resizedElement === 'text' ? 'opacity-100' : ''}`}
+                        onMouseDown={handleResizeStart('text')}
+                      >
+                        <svg 
+                          className="w-3 h-3 text-pink-500" 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          strokeWidth="2"
+                        >
+                          <path d="M21 3L3 21M21 11L11 21M21 19L19 21" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Motif sélectionné */}
+                {formData.motifSelectionne && (
+                  <div 
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{
+                      transform: `translate(${formData.motifPosition.x - 50}%, ${formData.motifPosition.y - 50}%)`
+                    }}
+                  >
+                    <div className="relative group">
+                      <div 
+                        className={`select-none ${
+                          isDragging && draggedElement === 'motif' ? 'cursor-grabbing' : 'cursor-grab'
+                        }`}
+                        style={{
+                          transform: `scale(${formData.motifSize / 3})`,
+                          pointerEvents: 'auto'
+                        }}
+                        onMouseDown={handleDragStart('motif')}
+                      >
+                        <Image
+                          src={formData.motifSelectionne}
+                          alt="Motif sélectionné"
+                          width={100}
+                          height={100}
+                          className="object-contain"
+                        />
+                      </div>
+
+                      {/* Poignée de redimensionnement du motif */}
+                      <div
+                        className={`absolute -right-3 -bottom-3 w-6 h-6 bg-white border-2 border-pink-500 rounded-full 
+                          flex items-center justify-center cursor-se-resize opacity-0 group-hover:opacity-100 
+                          transition-opacity duration-200 ${isResizing && resizedElement === 'motif' ? 'opacity-100' : ''}`}
+                        onMouseDown={handleResizeStart('motif')}
+                      >
+                        <svg 
+                          className="w-3 h-3 text-pink-500" 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          strokeWidth="2"
+                        >
+                          <path d="M21 3L3 21M21 11L11 21M21 19L19 21" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
+            {/* Affichage des valeurs pour copier dans Supabase */}
+            {personnalisation?.can_move_text && (
+              <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Position du texte :</h3>
+                <div className="bg-white p-3 rounded border border-gray-300 font-mono text-sm">
+                  <pre className="whitespace-pre-wrap break-all">
+{JSON.stringify({
+  text_position_x: Number(formData.textPosition.x.toFixed(2)),
+  text_position_y: Number(formData.textPosition.y.toFixed(2)),
+  text_size: Number(formData.textSize.toFixed(2))
+}, null, 2)}</pre>
+                </div>
+              </div>
+            )}
+            {personnalisation?.can_move_motif && (
+              <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Position du motif :</h3>
+                <div className="bg-white p-3 rounded border border-gray-300 font-mono text-sm">
+                  <pre className="whitespace-pre-wrap break-all">
+{JSON.stringify({
+  motif_position_x: Number(formData.motifPosition.x.toFixed(2)),
+  motif_position_y: Number(formData.motifPosition.y.toFixed(2)),
+  motif_size: Number(formData.motifSize.toFixed(2))
+}, null, 2)}</pre>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Colonne de droite - Personnalisation */}
@@ -240,28 +531,60 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
 
             <div className="space-y-6">
               {currentStep === 1 ? (
-                /* Étape 1 : Prénom avec design amélioré */
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <label htmlFor="prenom" className="block text-base font-medium text-gray-700 mb-3">
-                    Quel prénom souhaitez-vous broder ?
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      id="prenom"
-                      name="prenom"
-                      value={formData.prenom}
-                      onChange={handleInputChange}
-                      className="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-lg transition-all duration-200"
-                      placeholder="Ex: Louise"
-                    />
-                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                      <span className="text-pink-400">✨</span>
+                /* Étape 1 : Prénom et couleur de broderie */
+                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm space-y-6">
+                  {/* Champ prénom */}
+                  <div>
+                    <label htmlFor="prenom" className="block text-base font-medium text-gray-700 mb-3">
+                      Quel prénom souhaitez-vous broder ?
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="prenom"
+                        name="prenom"
+                        value={formData.prenom}
+                        onChange={handleInputChange}
+                        className="block w-full px-4 py-3 rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 text-lg transition-all duration-200"
+                        placeholder="Ex: Louise"
+                      />
+                      <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                        <span className="text-pink-400">✨</span>
+                      </div>
                     </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Ce prénom sera brodé avec soin sur votre article
+                    </p>
                   </div>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Ce prénom sera brodé avec soin sur votre article
-                  </p>
+
+                  {/* Sélection de la couleur de broderie */}
+                  <div>
+                    <label className="block text-base font-medium text-gray-700 mb-3">
+                      Choisissez la couleur de la broderie
+                    </label>
+                    <div className="grid grid-cols-4 gap-3">
+                      {broderingColors.map((color) => (
+                        <button
+                          key={color.id}
+                          onClick={() => setFormData(prev => ({ ...prev, broderingColor: color.id }))}
+                          className={`relative flex flex-col items-center p-2 rounded-lg transition-all ${
+                            formData.broderingColor === color.id
+                              ? 'ring-2 ring-pink-500 border-transparent'
+                              : 'border border-gray-200 hover:border-pink-300'
+                          }`}
+                        >
+                          <div 
+                            className={`w-8 h-8 rounded-full mb-1 ${color.border ? 'border border-gray-200' : ''}`}
+                            style={{ backgroundColor: color.hex }}
+                          />
+                          <span className="text-xs font-medium text-gray-700">{color.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                      La couleur sélectionnée sera utilisée pour broder le prénom
+                    </p>
+                  </div>
                 </div>
               ) : currentStep === 2 ? (
                 /* Étape 2 : Motifs */
@@ -362,6 +685,18 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                     </div>
                     <div className="flex items-center justify-between py-3 border-b border-gray-200">
                       <div>
+                        <p className="text-sm font-medium text-gray-500">Couleur de broderie</p>
+                        <p className="text-base font-medium text-gray-900">{broderingColors.find(color => color.id === formData.broderingColor)?.name}</p>
+                      </div>
+                      <button 
+                        onClick={() => setCurrentStep(1)}
+                        className="text-sm text-pink-600 hover:text-pink-800"
+                      >
+                        Modifier
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between py-3 border-b border-gray-200">
+                      <div>
                         <p className="text-sm font-medium text-gray-500">Motif {formData.wantMotif ? '(+3€)' : ''}</p>
                         {formData.wantMotif ? (
                           <div className="w-16 h-16 relative mt-1">
@@ -424,7 +759,12 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                           quantity: 1,
                           customization: {
                             prenom: formData.prenom,
-                            motif: formData.motifSelectionne
+                            broderingColor: formData.broderingColor,
+                            motif: formData.motifSelectionne,
+                            textPosition: formData.textPosition,
+                            textSize: formData.textSize,
+                            motifPosition: formData.motifPosition,
+                            motifSize: formData.motifSize
                           }
                         });
                         openCart();
