@@ -37,11 +37,11 @@
         - 📁 **confirmation/**
           - 📄 `page.tsx` (2.3 KB)
         - 📄 `layout.tsx` (370 bytes)
-        - 📄 `page.tsx` (20.3 KB)
+        - 📄 `page.tsx` (25.0 KB)
       - 📁 **personnalisation/**
         - 📁 **[slug]/**
           - 📄 `loading.tsx` (69 bytes)
-          - 📄 `page.tsx` (13.4 KB)
+          - 📄 `page.tsx` (17.9 KB)
       - 📁 **produit/**
         - 📁 **[slug]/**
           - 📄 `loading.tsx` (69 bytes)
@@ -57,7 +57,7 @@
       - 📁 **animations/**
         - 📄 `CartFlyAnimation.tsx` (1.8 KB)
       - 📁 **cart/**
-        - 📄 `SlideCart.tsx` (6.0 KB)
+        - 📄 `SlideCart.tsx` (6.3 KB)
       - 📁 **layout/**
         - 📄 `Footer.tsx` (2.7 KB)
         - 📄 `MobileMenu.tsx` (2.3 KB)
@@ -70,11 +70,12 @@
       - 📄 `MapComponent.tsx` (3.2 KB)
       - 📄 `loading.tsx` (447 bytes)
     - 📁 **hooks/**
-      - 📄 `useCart.ts` (2.0 KB)
+      - 📄 `useCart.ts` (2.3 KB)
       - 📄 `useCart.tsx` (2.2 KB)
     - 📁 **lib/**
       - 📄 `mondialrelay.ts` (1.4 KB)
       - 📄 `payplug.ts` (2.2 KB)
+      - 📄 `shipping.ts` (997 bytes)
       - 📄 `supabase.ts` (420 bytes)
     - 📁 **providers/**
       - 📄 `CartProvider.tsx` (363 bytes)
