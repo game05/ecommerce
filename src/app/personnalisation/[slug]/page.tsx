@@ -322,93 +322,55 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                 {/* Prénom brodé */}
                 {formData.prenom && (
                   <div 
-                    className="absolute inset-0 flex items-center justify-center"
+                    className={`absolute transform -translate-x-1/2 -translate-y-1/2 text-center select-none font-serif font-medium tracking-wide -rotate-6
+                      ${isDragging && draggedElement === 'text' ? 'cursor-grabbing' : personnalisation?.can_move_text ? 'cursor-grab' : ''}`}
                     style={{
-                      transform: `translate(${formData.textPosition.x - 50}%, ${formData.textPosition.y - 50}%)`
+                      left: `${formData.textPosition.x}%`,
+                      top: `${formData.textPosition.y}%`,
+                      fontSize: `${formData.textSize}rem`,
+                      color: formData.broderingColor === 'white' ? 'black' : formData.broderingColor,
+                      textShadow: formData.broderingColor === 'white' ? '0 0 2px rgba(0,0,0,0.3)' : 'none'
                     }}
+                    onMouseDown={handleDragStart('text')}
                   >
-                    <div className="relative group">
-                      <div 
-                        className={`font-serif font-medium tracking-wide transform -rotate-6 select-none ${
-                          isDragging && draggedElement === 'text' ? 'cursor-grabbing' : 'cursor-grab'
-                        }`}
-                        style={{ 
-                          color: broderingColors.find(c => c.id === formData.broderingColor)?.hex || '#000000',
-                          textShadow: formData.broderingColor === 'white' ? '0 0 1px #000' : 'none',
-                          pointerEvents: 'auto',
-                          fontSize: `${formData.textSize}rem`
-                        }}
-                        onMouseDown={handleDragStart('text')}
-                      >
-                        {formData.prenom}
-                      </div>
-
-                      {/* Poignée de redimensionnement du texte */}
+                    {formData.prenom || 'Prénom'}
+                    {/* Poignée de redimensionnement pour le texte */}
+                    {personnalisation?.can_move_text && (
                       <div
-                        className={`absolute -right-3 -bottom-3 w-6 h-6 bg-white border-2 border-pink-500 rounded-full 
-                          flex items-center justify-center cursor-se-resize opacity-0 group-hover:opacity-100 
-                          transition-opacity duration-200 ${isResizing && resizedElement === 'text' ? 'opacity-100' : ''}`}
+                        className="absolute bottom-0 right-0 w-4 h-4 bg-pink-500 rounded-full cursor-se-resize transform translate-x-1/2 translate-y-1/2 opacity-50 hover:opacity-100"
                         onMouseDown={handleResizeStart('text')}
-                      >
-                        <svg 
-                          className="w-3 h-3 text-pink-500" 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          strokeWidth="2"
-                        >
-                          <path d="M21 3L3 21M21 11L11 21M21 19L19 21" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
-                    </div>
+                      />
+                    )}
                   </div>
                 )}
 
-                {/* Motif sélectionné */}
-                {formData.motifSelectionne && (
-                  <div 
-                    className="absolute inset-0 flex items-center justify-center"
+                {/* Motif */}
+                {formData.wantMotif && formData.motifSelectionne && (
+                  <div
+                    className={`absolute transform -translate-x-1/2 -translate-y-1/2 select-none
+                      ${isDragging && draggedElement === 'motif' ? 'cursor-grabbing' : personnalisation?.can_move_motif ? 'cursor-grab' : ''}`}
                     style={{
-                      transform: `translate(${formData.motifPosition.x - 50}%, ${formData.motifPosition.y - 50}%)`
+                      left: `${formData.motifPosition.x}%`,
+                      top: `${formData.motifPosition.y}%`,
+                      width: `${formData.motifSize * 2}rem`,
+                      height: `${formData.motifSize * 2}rem`
                     }}
+                    onMouseDown={handleDragStart('motif')}
                   >
-                    <div className="relative group">
-                      <div 
-                        className={`select-none ${
-                          isDragging && draggedElement === 'motif' ? 'cursor-grabbing' : 'cursor-grab'
-                        }`}
-                        style={{
-                          transform: `scale(${formData.motifSize / 3})`,
-                          pointerEvents: 'auto'
-                        }}
-                        onMouseDown={handleDragStart('motif')}
-                      >
-                        <Image
-                          src={formData.motifSelectionne}
-                          alt="Motif sélectionné"
-                          width={100}
-                          height={100}
-                          className="object-contain"
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={formData.motifSelectionne}
+                        alt="Motif personnalisé"
+                        fill
+                        className="object-contain"
+                      />
+                      {/* Poignée de redimensionnement pour le motif */}
+                      {personnalisation?.can_move_motif && (
+                        <div
+                          className="absolute bottom-0 right-0 w-4 h-4 bg-pink-500 rounded-full cursor-se-resize transform translate-x-1/2 translate-y-1/2 opacity-50 hover:opacity-100"
+                          onMouseDown={handleResizeStart('motif')}
                         />
-                      </div>
-
-                      {/* Poignée de redimensionnement du motif */}
-                      <div
-                        className={`absolute -right-3 -bottom-3 w-6 h-6 bg-white border-2 border-pink-500 rounded-full 
-                          flex items-center justify-center cursor-se-resize opacity-0 group-hover:opacity-100 
-                          transition-opacity duration-200 ${isResizing && resizedElement === 'motif' ? 'opacity-100' : ''}`}
-                        onMouseDown={handleResizeStart('motif')}
-                      >
-                        <svg 
-                          className="w-3 h-3 text-pink-500" 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          strokeWidth="2"
-                        >
-                          <path d="M21 3L3 21M21 11L11 21M21 19L19 21" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
+                      )}
                     </div>
                   </div>
                 )}
