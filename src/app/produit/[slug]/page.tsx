@@ -17,6 +17,7 @@ type Product = {
   description: string;
   price: number;
   image_url: string;
+  image_sup?: string[];
   stock: number;
   details: string[];
 };
@@ -24,6 +25,7 @@ type Product = {
 export default function ProductPage({ params }: { params: { slug: string } }) {
   const [skipCustomization, setSkipCustomization] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [showFlyAnimation, setShowFlyAnimation] = useState(false);
   const [cartIconPosition, setCartIconPosition] = useState({ x: 0, y: 0 });
@@ -66,7 +68,10 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           .single();
 
         if (error) throw error;
-        setProduct(data);
+        if (data) {
+          setProduct(data);
+          setSelectedImage(data.image_url);
+        }
       } catch (error) {
         console.error('Erreur lors de la récupération du produit:', error);
       } finally {
@@ -162,17 +167,54 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Colonne gauche - Image */}
           <div className="relative">
-            <div className="sticky top-24">
+            <div className="sticky top-24 space-y-4">
               <div className="aspect-square rounded-2xl overflow-hidden bg-gray-50 shadow-lg">
                 <Image
-                  src={product.image_url}
+                  src={selectedImage || product.image_url}
                   alt={product.name}
                   fill
                   priority
-                  className="object-cover hover:scale-105 transition-transform duration-500"
+                  className="object-contain p-4 sm:p-8 hover:scale-105 transition-transform duration-500 !object-[center_30%]"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
+              
+              {/* Images supplémentaires */}
+              {product.image_sup && product.image_sup.length > 0 && (
+                <div className="flex gap-2 sm:gap-4 mt-2 sm:mt-4 overflow-x-auto pb-2 sm:pb-0">
+                  <button
+                    onClick={() => setSelectedImage(product.image_url)}
+                    className={`relative w-20 h-20 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
+                      selectedImage === product.image_url ? 'border-pink-500 shadow-lg' : 'border-transparent hover:border-pink-200'
+                    }`}
+                  >
+                    <Image
+                      src={product.image_url}
+                      alt={`${product.name} - Image principale`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 80px, 128px"
+                    />
+                  </button>
+                  {product.image_sup.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImage(image)}
+                      className={`relative w-20 h-20 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImage === image ? 'border-pink-500 shadow-lg' : 'border-transparent hover:border-pink-200'
+                      }`}
+                    >
+                      <Image
+                        src={image}
+                        alt={`${product.name} - Image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 80px, 128px"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
