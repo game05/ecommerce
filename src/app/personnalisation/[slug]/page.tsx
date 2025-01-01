@@ -49,23 +49,6 @@ const broderingColors = [
 // Prix du motif
 const MOTIF_PRICE = 3;
 
-// Liste des positions prédéfinies
-const predefinedPositions = {
-  text: [
-    { name: 'Haut', x: 50, y: 25 },
-    { name: 'Centre', x: 50, y: 50 },
-    { name: 'Bas', x: 50, y: 75 },
-    { name: 'Gauche', x: 25, y: 50 },
-    { name: 'Milieu', x: 50, y: 50 },
-    { name: 'Droite', x: 75, y: 50 },
-  ],
-  sizes: [
-    { name: 'Petit', value: 2 },
-    { name: 'Moyen', value: 3 },
-    { name: 'Grand', value: 4 },
-  ]
-};
-
 export default function PersonnalisationPage({ params }: { params: { slug: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -88,23 +71,6 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
   const [startSize, setStartSize] = useState(3);
   const [draggedElement, setDraggedElement] = useState<'text' | 'motif' | null>(null);
   const [resizedElement, setResizedElement] = useState<'text' | 'motif' | null>(null);
-  const [isFullScreenPreview, setIsFullScreenPreview] = useState(false);
-
-  // Fonction pour mettre à jour la position du texte (version mobile)
-  const updateTextPosition = (x: number, y: number) => {
-    setFormData(prev => ({
-      ...prev,
-      textPosition: { x, y }
-    }));
-  };
-
-  // Fonction pour mettre à jour la taille du texte (version mobile)
-  const updateTextSize = (size: number) => {
-    setFormData(prev => ({
-      ...prev,
-      textSize: size
-    }));
-  };
 
   // Fonction pour vérifier si l'utilisateur est admin
   const isAdmin = async () => {
@@ -354,8 +320,8 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
                 {/* Prénom brodé */}
-                <div className="hidden sm:block">
-                  <div
+                {formData.prenom && (
+                  <div 
                     className={`absolute transform -translate-x-1/2 -translate-y-1/2 text-center select-none font-serif font-medium tracking-wide -rotate-6
                       ${isDragging && draggedElement === 'text' ? 'cursor-grabbing' : personnalisation?.can_move_text ? 'cursor-grab' : ''}`}
                     style={{
@@ -376,152 +342,64 @@ export default function PersonnalisationPage({ params }: { params: { slug: strin
                       />
                     )}
                   </div>
-                </div>
-
-                {/* Version Mobile */}
-                <div className="block sm:hidden">
-                  {/* Prénom brodé */}
-                  <div
-                    className="absolute transform -translate-x-1/2 -translate-y-1/2 text-center select-none font-serif font-medium tracking-wide -rotate-6"
-                    style={{
-                      left: `${formData.textPosition.x}%`,
-                      top: `${formData.textPosition.y}%`,
-                      fontSize: `${formData.textSize}rem`,
-                      color: formData.broderingColor === 'white' ? 'black' : formData.broderingColor,
-                      textShadow: formData.broderingColor === 'white' ? '0 0 2px rgba(0,0,0,0.3)' : 'none'
-                    }}
-                  >
-                    {formData.prenom || 'Prénom'}
-                  </div>
-                </div>
+                )}
 
                 {/* Motif */}
                 {formData.wantMotif && formData.motifSelectionne && (
-                  <div className="hidden sm:block">
-                    <div
-                      className={`absolute transform -translate-x-1/2 -translate-y-1/2 select-none
-                        ${isDragging && draggedElement === 'motif' ? 'cursor-grabbing' : personnalisation?.can_move_motif ? 'cursor-grab' : ''}`}
-                      style={{
-                        left: `${formData.motifPosition.x}%`,
-                        top: `${formData.motifPosition.y}%`,
-                        width: `${formData.motifSize * 2}rem`,
-                        height: `${formData.motifSize * 2}rem`
-                      }}
-                      onMouseDown={handleDragStart('motif')}
-                    >
-                      <div className="relative w-full h-full">
-                        <Image
-                          src={formData.motifSelectionne}
-                          alt="Motif personnalisé"
-                          fill
-                          className="object-contain"
-                        />
-                        {/* Poignée de redimensionnement pour le motif */}
-                        {personnalisation?.can_move_motif && (
-                          <div
-                            className="absolute bottom-0 right-0 w-4 h-4 bg-pink-500 rounded-full cursor-se-resize transform translate-x-1/2 translate-y-1/2 opacity-50 hover:opacity-100"
-                            onMouseDown={handleResizeStart('motif')}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Version Mobile */}
-                {formData.wantMotif && formData.motifSelectionne && (
-                  <div className="block sm:hidden">
-                    <div
-                      className="absolute transform -translate-x-1/2 -translate-y-1/2 select-none"
-                      style={{
-                        left: `${formData.motifPosition.x}%`,
-                        top: `${formData.motifPosition.y}%`,
-                        width: `${formData.motifSize * 2}rem`,
-                        height: `${formData.motifSize * 2}rem`
-                      }}
-                    >
-                      <div className="relative w-full h-full">
-                        <Image
-                          src={formData.motifSelectionne}
-                          alt="Motif personnalisé"
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Contrôles Mobile */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white p-4 rounded-t-3xl shadow-lg transform translate-y-[85%] hover:translate-y-0 transition-transform duration-300 ease-in-out sm:hidden">
-              <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-4"></div>
-              
-              {/* Position du texte */}
-              <div className="mb-4">
-                <h3 className="text-lg font-medium mb-2">Position du texte</h3>
-                <div className="grid grid-cols-3 gap-2">
-                  {predefinedPositions.text.map((pos) => (
-                    <button
-                      key={pos.name}
-                      onClick={() => updateTextPosition(pos.x, pos.y)}
-                      className={`p-2 rounded-lg border-2 ${
-                        formData.textPosition.x === pos.x && formData.textPosition.y === pos.y
-                          ? 'border-pink-500 bg-pink-50'
-                          : 'border-gray-200'
-                      }`}
-                    >
-                      {pos.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Taille du texte */}
-              <div className="mb-4">
-                <h3 className="text-lg font-medium mb-2">Taille du texte</h3>
-                <div className="flex gap-2">
-                  {predefinedPositions.sizes.map((size) => (
-                    <button
-                      key={size.name}
-                      onClick={() => updateTextSize(size.value)}
-                      className={`flex-1 p-2 rounded-lg border-2 ${
-                        formData.textSize === size.value
-                          ? 'border-pink-500 bg-pink-50'
-                          : 'border-gray-200'
-                      }`}
-                    >
-                      {size.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Aperçu plein écran */}
-              <button
-                onClick={() => setIsFullScreenPreview(!isFullScreenPreview)}
-                className="w-full p-3 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 transition-colors"
-              >
-                {isFullScreenPreview ? 'Fermer l\'aperçu' : 'Voir en plein écran'}
-              </button>
-            </div>
-
-            {/* Modal d'aperçu plein écran */}
-            {isFullScreenPreview && (
-              <div className="fixed inset-0 bg-white z-50 sm:hidden">
-                <div className="relative w-full h-full">
-                  <button
-                    onClick={() => setIsFullScreenPreview(false)}
-                    className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full shadow-lg"
+                  <div
+                    className={`absolute transform -translate-x-1/2 -translate-y-1/2 select-none
+                      ${isDragging && draggedElement === 'motif' ? 'cursor-grabbing' : personnalisation?.can_move_motif ? 'cursor-grab' : ''}`}
+                    style={{
+                      left: `${formData.motifPosition.x}%`,
+                      top: `${formData.motifPosition.y}%`,
+                      width: `${formData.motifSize * 2}rem`,
+                      height: `${formData.motifSize * 2}rem`
+                    }}
+                    onMouseDown={handleDragStart('motif')}
                   >
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                  <div className="w-full h-full relative">
-                    {/* Contenu de l'aperçu */}
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={formData.motifSelectionne}
+                        alt="Motif personnalisé"
+                        fill
+                        className="object-contain"
+                      />
+                      {/* Poignée de redimensionnement pour le motif */}
+                      {personnalisation?.can_move_motif && (
+                        <div
+                          className="absolute bottom-0 right-0 w-4 h-4 bg-pink-500 rounded-full cursor-se-resize transform translate-x-1/2 translate-y-1/2 opacity-50 hover:opacity-100"
+                          onMouseDown={handleResizeStart('motif')}
+                        />
+                      )}
+                    </div>
                   </div>
+                )}
+              </div>
+            </div>
+            {/* Affichage des valeurs pour copier dans Supabase */}
+            {personnalisation?.can_move_text && (
+              <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Position du texte :</h3>
+                <div className="bg-white p-3 rounded border border-gray-300 font-mono text-sm">
+                  <pre className="whitespace-pre-wrap break-all">
+{JSON.stringify({
+  text_position_x: Number(formData.textPosition.x.toFixed(2)),
+  text_position_y: Number(formData.textPosition.y.toFixed(2)),
+  text_size: Number(formData.textSize.toFixed(2))
+}, null, 2)}</pre>
+                </div>
+              </div>
+            )}
+            {personnalisation?.can_move_motif && (
+              <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Position du motif :</h3>
+                <div className="bg-white p-3 rounded border border-gray-300 font-mono text-sm">
+                  <pre className="whitespace-pre-wrap break-all">
+{JSON.stringify({
+  motif_position_x: Number(formData.motifPosition.x.toFixed(2)),
+  motif_position_y: Number(formData.motifPosition.y.toFixed(2)),
+  motif_size: Number(formData.motifSize.toFixed(2))
+}, null, 2)}</pre>
                 </div>
               </div>
             )}
