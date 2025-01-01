@@ -174,7 +174,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                   alt={product.name}
                   fill
                   priority
-                  className="object-contain p-4 sm:p-8 hover:scale-105 transition-transform duration-500 !object-[center_30%]"
+                  className="object-contain p-2 sm:p-8 transition-transform duration-500 !object-[center_30%]"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
