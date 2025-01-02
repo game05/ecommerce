@@ -37,11 +37,11 @@
         - 📁 **confirmation/**
           - 📄 `page.tsx` (2.3 KB)
         - 📄 `layout.tsx` (370 bytes)
-        - 📄 `page.tsx` (25.0 KB)
+        - 📄 `page.tsx` (25.7 KB)
       - 📁 **personnalisation/**
         - 📁 **[slug]/**
           - 📄 `loading.tsx` (69 bytes)
-          - 📄 `page.tsx` (34.0 KB)
+          - 📄 `page.tsx` (30.9 KB)
       - 📁 **produit/**
         - 📁 **[slug]/**
           - 📄 `loading.tsx` (69 bytes)
@@ -57,7 +57,7 @@
       - 📁 **animations/**
         - 📄 `CartFlyAnimation.tsx` (1.8 KB)
       - 📁 **cart/**
-        - 📄 `SlideCart.tsx` (6.3 KB)
+        - 📄 `SlideCart.tsx` (7.0 KB)
       - 📁 **layout/**
         - 📄 `Footer.tsx` (2.7 KB)
         - 📄 `MobileMenu.tsx` (2.3 KB)

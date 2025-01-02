@@ -215,7 +215,7 @@
                 },
                 {
                   "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\commande\\page.tsx",
-                  "size": 25558,
+                  "size": 26304,
                   "is_file": true
                 }
               ]
@@ -255,7 +255,7 @@
                     },
                     {
                       "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\app\\personnalisation\\[slug]\\page.tsx",
-                      "size": 34779,
+                      "size": 31679,
                       "is_file": true
                     }
                   ]
@@ -323,7 +323,7 @@
               "children": [
                 {
                   "path": "C:\\Users\\prive\\Desktop\\lachabroderie.fr\\site\\src\\components\\cart\\SlideCart.tsx",
-                  "size": 6422,
+                  "size": 7188,
                   "is_file": true
                 }
               ]
