@@ -189,13 +189,13 @@ export default function ServiettesPage() {
               prefetch={true}
               className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 ease-in-out"
             >
-              <div className="relative aspect-square overflow-hidden bg-gray-100">
+              <div className="relative aspect-square overflow-hidden bg-gray-100 p-4">
                 <Image
                   src={serviette.image_url}
                   alt={serviette.name}
                   fill
                   priority
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="object-contain group-hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   loading="eager"
                 />
